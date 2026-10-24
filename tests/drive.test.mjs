@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createDrive,accelerate,accelerateSteering,advanceDrive,depthAt,rearDepthAt,CRUISE_SPEED,MAX_SPEED,STEERING_MAX_SPEED} from '../drive.js';
+import {createDrive,accelerate,accelerateSteering,advanceDrive,depthAt,rearDepthAt,CRUISE_SPEED,MAX_SPEED,STEERING_MAX_SPEED} from '../src/driving/drive.js';
 
 test('spinning the rim surges immediately beyond normal scroll speed and then settles',()=>{
   assert.deepEqual(accelerateSteering(createDrive(),60),accelerateSteering(createDrive(),-60));

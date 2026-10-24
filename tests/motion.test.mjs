@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {drivingPose,steeringPose} from '../motion.js';
-import {createPendulum,stepPendulum,drivingAcceleration} from '../motion.js';
+import {drivingPose,steeringPose} from '../src/driving/motion.js';
+import {createPendulum,stepPendulum,drivingAcceleration} from '../src/driving/motion.js';
 
 test('steering turns the view and cabin in both directions and returns to neutral',()=>{
   assert.ok(Object.values(steeringPose(0)).every(value=>value===0));

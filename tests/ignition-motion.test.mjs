@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {ignitionPose,keyringRotation,KEY_EYELET_RADIUS} from '../ignition-motion.js';
-import {createPendulum,stepPendulum} from '../motion.js';
+import {ignitionPose,keyringRotation,KEY_EYELET_RADIUS} from '../src/animations/ignition-motion.js';
+import {createPendulum,stepPendulum} from '../src/driving/motion.js';
 
 test('the inserted key makes a full quarter turn and holds the switched position',()=>{
   assert.equal(ignitionPose(0).degrees,0);

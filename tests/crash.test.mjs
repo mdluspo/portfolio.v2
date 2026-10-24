@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {wheelContains,wheelScrollTurn,createCrash,advanceCrash,crashPose,CRASH_TIMING,shouldCrash} from '../crash.js';
+import {wheelContains,wheelScrollTurn,createCrash,advanceCrash,crashPose,CRASH_TIMING,shouldCrash} from '../src/driving/crash.js';
 
 const rect={left:0,top:0,width:400,height:400};
 test('only the steering wheel area triggers the Easter egg',()=>{

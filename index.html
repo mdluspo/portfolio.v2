@@ -3,204 +3,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#161918">
-<link rel="stylesheet" href="/style.css?v=binder-layout-11">
+<link rel="stylesheet" href="/src/styles/base.css">
 <title>Martin Luspo — Take the drive</title>
 <meta name="description" content="Martin Luspo. Frontend & UI/UX Developer. I design and build playful, accessible React interfaces.">
 <link rel="preload" as="image" href="/assets/ignition-key-inserted.png"><link rel="preload" as="image" href="/assets/ignition-lock-comic.png"><link rel="preload" as="image" href="/assets/ignition-keyring-comic.png"><link rel="preload" as="font" type="font/ttf" href="/assets/fonts/VT323-Regular.ttf" crossorigin><link rel="preload" as="image" href="/assets/car-cabin-extended-v2.png">
-<style id="object-component-styles">
-/* The object layouts travel with their markup so a stale stylesheet cannot flatten them. */
-.painted-tablet{position:relative;aspect-ratio:3/2;clip-path:inset(4.5% 1.8% 4.4% round 5.3% / 8%)}
-.painted-tablet .tablet-frame-art{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;z-index:0;filter:saturate(.8) brightness(.96)}
-.painted-tablet .tablet-screen{position:absolute;left:6.8%;top:12.3%;width:86.5%;height:75.9%;aspect-ratio:auto;overflow:hidden;background:#080b10;border:0;border-radius:12px;z-index:1;box-shadow:inset 0 0 3px #000}
-.painted-tablet .tablet-screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
-.id-card-dialog .dialog-stack,.id-card-dialog .card-sheet{display:contents}
-.id-card-dialog #category,.id-card-dialog #card-title,.id-card-dialog .card-bottom{display:none}
-/* About is the ID itself, examined as a two-sided object. */
-dialog.id-card-dialog{position:fixed;top:50%;margin:0;left:50%;right:auto;transform:translate(-50%,-50%);width:min(590px,calc(100% - 50px));max-height:none;overflow:visible;padding:0;border:0;background:transparent;box-shadow:none}
-dialog.id-card-dialog[open]{animation:none}
-.id-card-dialog .dialog-workspace{display:block}
-.id-card-dialog .card-category,.id-card-dialog .card-heading,.id-card-dialog .card-bottom{display:none}
-.id-card-dialog #close{top:-45px;right:-2px;color:#e9e4ce;background:#182019cc;border:1px solid #888c72;width:36px;height:36px;font-size:26px}
-.id-inspection{perspective:1400px}
-.id-turntable{position:relative;aspect-ratio:1.65;transform-style:preserve-3d;transform:rotateX(var(--inspect-x,0deg)) rotateY(calc(var(--id-turn,0deg) + var(--inspect-y,0deg)));transition:transform .7s cubic-bezier(.2,.7,.25,1)!important;cursor:grab}
-.id-turntable:active{cursor:grabbing}
-.id-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid #242c20;border-radius:4px 2px 5px 3px;padding:28px 30px;background:linear-gradient(153deg,#66765326 0 12%,transparent 12% 89%,#52654330 89%),linear-gradient(28deg,#67774e20 0 17%,transparent 17% 94%,#e1e6c340 94%),linear-gradient(103deg,#a8b098,#cbd0b7 14%,#d6d9bf 74%,#a8b397);color:#263421;box-shadow:inset 1px 2px 0 #e8ebce88,inset -3px -3px 0 #62735655,3px 5px 0 #151f16,6px 10px 18px #060d0866}
-.id-face::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;background:center/100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360'%3E%3Cg fill='none' stroke='%23313e2a' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='m6 19 14-13m-13 20 20-19m-16 24 13-13m556-8 13 11m-19-8 18 16M7 326l18 22m-18-12 10 12m560 1 16-19m-23 18 21-25M37 5l57-1m10 1 22 1m337 349 63-1m12 0 24-2'/%3E%3C/g%3E%3C/svg%3E")}
-.id-heading,.id-detail,.id-inspect-controls{font-family:'Cabin Display','Courier New',monospace;letter-spacing:1px}
-.id-heading{display:block;font-size:15px;color:#5d654c}
-.id-front-layout{display:grid;grid-template-columns:30% 1fr;gap:27px;align-items:center;margin:18px 0}
-.id-photo{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border:1px solid #4b553e;filter:saturate(.8);box-shadow:2px 2px 0 #6c735a}
-.id-identity h2{font-family:'Cabin Display','Courier New',monospace;font-size:clamp(31px,5vw,48px);line-height:.93;margin:0 0 10px;color:#212c1f}
-.id-identity p{font-size:15px;line-height:1.3;margin:0 0 8px;color:#3e4a33}
-.id-identity>span{font-size:11px;color:#5e684e}
-.id-rule{height:1px;background:#68705266;margin-bottom:13px}
-.id-detail{font-size:11px;color:#5a6549}
-.id-back{transform:rotateY(180deg)}
-.id-back h2{font-size:29px;margin:16px 0 12px}
-.id-back p{font-size:14px;line-height:1.55;margin:10px 0;color:#3a4832}
-.id-back a{display:inline-block;font-size:13px;color:#3b5361;margin:6px 0;text-underline-offset:4px}
-.id-back a:hover{color:#3f718e}
-.id-barcode{height:24px;width:38%;margin:15px 0 9px;background:repeating-linear-gradient(90deg,#303c29 0 2px,transparent 2px 3px,#303c29 3px 4px,transparent 4px 7px,#303c29 7px 10px,transparent 10px 12px);opacity:.7}
-.id-inspect-controls{position:absolute;left:0;right:0;top:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:24px;color:#dddcc5;font-size:15px;text-shadow:1px 2px #131b13}
-.id-inspect-controls button{font:inherit;border-bottom:1px solid #aeb297;padding:8px 0;color:#eee8d3;min-height:42px}
-.id-inspect-controls button:hover{color:#a6bdc6;border-color:#a6bdc6}
-@media(max-width:600px){dialog.id-card-dialog{width:calc(100% - 32px)}.id-face{padding:22px}.id-turntable{aspect-ratio:1.35}.id-front-layout{gap:17px;margin:20px 0}.id-identity p{font-size:13px}.id-identity>span{font-size:10px}.id-detail{font-size:10px}.id-back p{font-size:12px}.id-back h2{font-size:25px;margin:12px 0}.id-heading{font-size:13px}.id-barcode{margin:10px 0 7px;height:20px}.id-inspect-controls{font-size:13px}}
-
-/* A quiet, fixed shortcut menu complements the physical car controls. */
-#quick-nav{position:fixed;right:24px;top:22px;z-index:60;font-family:'Cabin Display','Courier New',monospace}
-#quick-toggle{display:grid;place-items:center;margin-left:auto;width:48px;height:46px;padding:0;border:1px solid #818672;border-radius:4px;background:linear-gradient(145deg,#394139,#222b23);color:#e1e1c9;box-shadow:2px 3px 0 #10180f,inset 1px 1px 0 #b9bf9455;cursor:pointer}
-#quick-toggle:hover{background:#404c3b}
-.quick-lines{position:relative;display:block;width:23px;height:18px}
-.quick-lines i{position:absolute;left:0;right:0;height:2px;border-radius:1px;background:currentColor;transition:transform .15s ease,opacity .15s ease}
-.quick-lines i:first-child{top:0}.quick-lines i:nth-child(2){top:8px}.quick-lines i:last-child{top:16px}
-.expanded .quick-lines i:first-child{transform:translateY(8px) rotate(45deg)}.expanded .quick-lines i:nth-child(2){opacity:0}.expanded .quick-lines i:last-child{transform:translateY(-8px) rotate(-45deg)}
-#quick-panel{position:absolute;right:0;top:58px;width:244px;max-height:calc(100dvh - 100px);overflow-y:auto;overscroll-behavior:contain;padding:14px 12px 12px;border:2px solid #101b12;border-radius:4px;background:linear-gradient(140deg,#424b3e,#273226 55%,#202a22);box-shadow:inset 1px 1px 0 #a4ad7b44,4px 5px 0 #0e170fcc,0 8px 22px #0005;color:#e5e4cc}
-#quick-panel[hidden]{display:none}
-#quick-panel>small{display:block;padding:5px 10px 12px;font-size:12px;letter-spacing:1.3px;color:#a8b094;border-bottom:1px solid #b8c29a33;margin-bottom:5px}
-#quick-panel>button,#quick-panel>a{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:42px;padding:9px 10px;border:0;border-radius:2px;background:none;font:inherit;font-size:21px;color:inherit;text-decoration:none;text-align:left;cursor:pointer}
-#quick-panel>button:hover,#quick-panel>a:hover,#quick-panel>button:focus-visible,#quick-panel>a:focus-visible{color:#f0f0d8;background:#96a58029;outline:1px solid #aeb792;outline-offset:0}
-@media(max-width:600px){#quick-nav{right:15px;top:15px}#quick-panel{width:min(244px,calc(100vw - 30px))}}
-</style>
-<style id="case-study-styles">
-/* An open, cloth-backed binder holds two stacks of the same cabin papers. */
-dialog.folder-card.case-study-card{right:3vw;left:auto;width:min(1120px,calc(100vw - 80px));max-height:calc(100dvh - 48px)}
-.case-workspace{position:relative;padding-top:46px}
-.case-toolbar{position:absolute;left:4px;right:4px;top:0;display:flex;align-items:center;justify-content:space-between;gap:16px;color:#e7e3ce;font:400 17px/1.2 'Cabin Display','Courier New',monospace;text-shadow:1px 2px #11190f}
-.case-toolbar button{font:inherit;min-height:36px;padding:4px 0;color:inherit}
-.case-toolbar button:hover{text-decoration:underline;text-underline-offset:5px}
-.case-toolbar [data-case-close]{font:28px/1 Arial,Helvetica,sans-serif;width:36px}
-.case-toolbar>span{margin-left:auto;color:#b6b7a0;font-size:13px;letter-spacing:1px}
-.case-folder{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;padding:25px 23px 28px;background:linear-gradient(90deg,#474c37,#596047 46%,#252c20 49.5%,#1c241b 50%,#596047 54%,#454d36);border:2px solid #192216;border-radius:5px 8px 8px 5px;box-shadow:inset 0 0 0 2px #a7aa7450,inset 0 0 0 7px #242d2344,4px 9px 0 #10190ec9,6px 17px 28px #070d0a66;isolation:isolate}
-.case-folder::before{content:'';position:absolute;inset:8px;border:1px dashed #b0ad6b44;border-radius:3px;pointer-events:none}
-.case-folder-tab{position:absolute;right:22px;bottom:calc(100% - 1px);padding:8px 20px 6px;background:#596047;border:2px solid #192216;border-bottom:0;border-radius:5px 8px 0 0;color:#e0ddc2;font:400 15px/1 'Cabin Display','Courier New',monospace;letter-spacing:.7px;z-index:-1}
-.case-document-stack{position:relative;min-width:0;isolation:isolate}
-.case-document-stack::before,.case-document-stack::after{content:'';position:absolute;inset:2px -2px -4px;background:linear-gradient(100deg,#c4bfa6,#e3ddc7 15%,#d4ceb6);border:1px solid #555842;box-shadow:1px 2px 0 #8d91736b;z-index:-1;pointer-events:none}
-.case-document-stack::before{transform:translate(3px,6px) rotate(1.1deg)}
-.case-document-stack::after{transform:translate(-3px,3px) rotate(-.7deg)}
-.folder-card .case-leaf.card-sheet{display:flex;flex-direction:column;gap:0;padding:28px 30px;min-height:min(570px,68dvh);height:100%;max-height:calc(100dvh - 160px);overflow:auto;scrollbar-width:thin;scrollbar-color:#969b80 transparent}
-.case-leaf .document-heading{display:flex;justify-content:space-between;font-size:11px;gap:12px;letter-spacing:.8px}
-.case-leaf h2{font-size:clamp(32px,4vw,46px);line-height:1.05;margin:30px 0 10px}
-.case-category{font:400 12px/1.4 'Cabin Display','Courier New',monospace;color:#62694e;margin:0 0 10px;letter-spacing:.5px}
-.case-placeholder{margin:16px 0 26px;padding-top:18px;border-top:1px solid #636c4844}
-.case-placeholder>span{font:400 13px/1.4 'Cabin Display','Courier New',monospace;letter-spacing:1px;color:#62694e}
-.case-placeholder p{font-size:13px;line-height:1.7;color:#72765e}
-.case-writing-lines{height:56px;background:repeating-linear-gradient(transparent 0 17px,#64704a22 17px 18px)}
-.case-leaf .document-footnote{margin-top:auto;padding-top:16px;border-top:1px solid #636c4844;font-size:11px;letter-spacing:1px}
-.case-image-mount{margin:28px 0 8px;padding:7px;background:#f1edda;border:1px solid #787e5e;box-shadow:2px 3px 0 #62684933;transform:rotate(1deg)}
-.case-image-mount img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;background:#252d22}
-.case-binding{position:absolute;left:50%;top:12%;bottom:12%;width:50px;transform:translateX(-50%);display:flex;flex-direction:column;justify-content:space-between;z-index:4;pointer-events:none}
-.case-binding i{position:relative;width:50px;height:19px;border:3px solid #7b8073;border-top-color:#d3d4bf;border-bottom-color:#404b3f;border-radius:50%;background:linear-gradient(transparent 45%,#29312477 50%,transparent 65%);box-shadow:0 3px 2px #0a160c99,inset 0 1px 1px #152018}
-.case-binding i::before,.case-binding i::after{content:'';position:absolute;top:3px;width:7px;height:7px;border-radius:50%;background:#162011;border:1px solid #a4a68b;z-index:-1}
-.case-binding i::before{left:-5px}.case-binding i::after{right:-5px}
-.case-folder{perspective:1800px}
-.case-document-stack{perspective:1600px}
-.case-folder{height:min(620px,calc(100dvh - 180px));min-height:280px;grid-template-rows:minmax(0,1fr)}
-.case-document-stack{height:100%;min-height:0}
-.folder-card .case-leaf.card-sheet{height:100%;min-height:0;max-height:none}
-.folder-card .case-leaf.case-turning-leaf,.folder-card .case-leaf.case-under-leaf{position:absolute;inset:0;margin:0;width:100%;pointer-events:none}
-.folder-card .case-leaf.case-turning-leaf{z-index:8;backface-visibility:hidden}
-.folder-card .case-leaf.case-under-leaf{z-index:0}
-.case-binding{z-index:10}
-.case-page-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 6px 0;color:#dddcc7;font:400 17px/1.2 'Cabin Display','Courier New',monospace}
-.case-page-controls button{font:inherit;color:inherit;min-height:32px;padding:3px 5px}
-.case-page-controls button:disabled{opacity:.3;cursor:default}
-.case-page-controls button:hover:not(:disabled){text-decoration:underline;text-underline-offset:4px}
-.case-page-controls>span{text-align:center;min-width:80px}
-.case-page-controls small{display:block;margin-top:4px;font-size:11px;letter-spacing:.8px;color:#aaaE95}
-@media(min-width:1500px){dialog.folder-card.case-study-card{right:4vw;width:min(1180px,82vw)}}
-@media(max-width:760px){dialog.folder-card.case-study-card{right:20px;width:calc(100vw - 40px);max-height:calc(100dvh - 36px)}.case-workspace{max-height:calc(100dvh - 36px);overflow:auto;padding:50px 4px 14px;scrollbar-width:thin}.case-folder{grid-template-columns:minmax(0,1fr);gap:24px;padding:20px 20px 24px 28px;background:linear-gradient(90deg,#252d20,#596047 8%,#454d36)}.case-folder-tab{right:14px;font-size:12px;padding:7px 12px}.folder-card .case-leaf.card-sheet{max-height:none;min-height:440px;padding:25px 24px}.case-binding{left:15px;top:70px;bottom:70px;width:28px}.case-binding i{width:28px;height:15px}.case-toolbar{left:5px;right:5px}.case-toolbar>span{font-size:11px}.case-leaf .document-heading{font-size:10px}}
-@media(max-width:760px){.case-folder{height:auto;grid-template-rows:repeat(2,clamp(400px,65dvh,520px))}.case-document-stack{height:100%}.folder-card .case-leaf.card-sheet{height:100%;min-height:0;max-height:none}}
-@media(max-width:600px){dialog.folder-card.contact-card{right:24px}.folder-card.contact-card .dialog-stack{margin:0}.contact-card .connect-email{font-size:16px}}
-
-
-dialog.folder-card.case-study-card{left:50%;right:auto;transform:translate(-50%,-50%);margin:0}
-.folder-card .case-leaf.case-turning-leaf{z-index:30;box-shadow:5px 8px 20px #10150e66;backface-visibility:hidden}
-.folder-card .case-leaf.card-sheet{overflow:hidden;scrollbar-width:none;display:block}
-.case-page-content{display:flex;flex-direction:column;transform-origin:top left}
-.case-page-content>*{flex-shrink:0}
-.case-page-content .case-placeholder{margin:12px 0 18px;padding-top:12px}
-.case-page-content .case-writing-lines{height:36px}
-.case-page-content .case-image-mount{margin-top:18px}
-.case-page-content .case-image-mount img{max-height:180px;object-fit:contain}
-.case-page-content h2{margin-top:22px}
-.case-flip-overlay{position:absolute;inset:0;z-index:1000;perspective:1800px;pointer-events:none;isolation:isolate;overflow:visible}
-.folder-card .case-flip-overlay>.case-leaf{position:absolute;margin:0;backface-visibility:hidden;pointer-events:none;box-shadow:5px 8px 24px #10150e66}
-.folder-card .case-flip-overlay>.case-turning-leaf{z-index:2}
-.folder-card .case-flip-overlay>.case-incoming-leaf{z-index:3}
-.case-flipping-sheet{position:absolute;transform-style:preserve-3d;pointer-events:none}
-.folder-card .case-flipping-sheet>.case-leaf{position:absolute;inset:0;margin:0;width:100%;height:100%;z-index:auto;backface-visibility:hidden;box-shadow:4px 6px 18px #10150e55;pointer-events:none}
-.folder-card .case-flipping-sheet>.case-flip-front{transform:rotateY(0deg) translateZ(.2px)}
-.folder-card .case-flipping-sheet>.case-flip-back{transform:rotateY(180deg) translateZ(.2px)}
-.case-binding.case-binding-overlay{z-index:1100;pointer-events:none}
-.case-document-stack{z-index:2}
-.case-binding.case-binding-rear{z-index:1}
-.case-binding.case-binding-front{z-index:10}
-.case-binding-front i{clip-path:inset(45% -4px -5px -4px);background:none;box-shadow:none}
-.case-binding-front i::before,.case-binding-front i::after{display:none}
-.case-binding.case-binding-front.case-binding-overlay{z-index:1100}
-.case-binding i{border-width:8px}
-.case-binding{width:54px}
-.case-binding i{width:54px;height:24px;border:8px solid;border-color:#787e6c #343e32 #a1a58e #414b3c;background:none;box-shadow:0 2px 1px #0d140b99;transform:rotate(-2deg)}
-.case-binding i::before,.case-binding i::after{display:block;content:'';position:absolute;width:auto;height:auto;border-radius:50%;background:none;z-index:auto}
-.case-binding i::before{inset:-9px;border:1px solid #172017;transform:rotate(1deg)}
-.case-binding i::after{inset:-5px;border:1px solid;border-color:#d6d1b7 #4c5847 #292f25 #87917c;transform:rotate(-1deg)}
-.case-binding-front i{box-shadow:none}
-.case-punch-holes{position:absolute;inset:0;pointer-events:none;z-index:4}
-.case-punch-holes i{position:absolute;width:15px;height:12px;border:1px solid #686344;border-top-color:#a89f7e;border-bottom-color:#e4dec3;border-radius:47% 53% 45% 55%;background:radial-gradient(ellipse at 50% 65%,#0d150c 20%,#293021 70%,#575c40);box-shadow:inset 1px 2px 2px #050c0799,0 1px 0 #faf4d055;transform:translateY(-50%) rotate(-5deg)}
-.case-punch-holes i:nth-child(1){top:var(--punch-y-0,12%)}
-.case-punch-holes i:nth-child(2){top:var(--punch-y-1,50%)}
-.case-punch-holes i:nth-child(3){top:var(--punch-y-2,88%)}
-[data-binding-side="right"]>.case-punch-holes i{right:2px}
-[data-binding-side="left"]>.case-punch-holes i{left:2px}
-@media(max-width:760px){.case-binding{width:34px}.case-binding i{width:34px;height:22px}.case-punch-holes i{left:2px;right:auto}}
-.case-section{margin:12px 0 6px}
-.case-section h3{font:400 18px/1.15 'Cabin Display','Courier New',monospace;margin:0 0 6px;color:#37442e}
-#card .case-section p{font-size:13px;line-height:1.6;margin:0 0 8px}
-.case-pullquote{margin:12px 0 20px;padding:12px 0 12px 14px;border-left:2px solid #737c59;font:400 22px/1.25 'Cabin Display','Courier New',monospace;color:#35412c}
-.case-steps{padding-left:20px;margin:10px 0 12px;font:400 13px/1.6 'Courier Prime','Courier New',monospace}
-.case-steps li{padding-left:3px;margin-bottom:9px}
-.case-steps b{font-weight:400;text-decoration:underline;text-underline-offset:3px}
-#card .case-caption{font-size:11px;line-height:1.6;color:#62694e;margin:10px 0 16px}
-.case-page-content:has(.case-steps) .case-image-mount{margin-top:6px}
-.case-page-content:has(.case-steps) .case-image-mount img{max-height:110px}
-.case-rule-flow{display:grid;gap:0;margin:8px 0 12px;font:400 16px/1.2 'Cabin Display','Courier New',monospace;color:#3d4a31}
-.case-rule-flow span{padding:7px 10px;border-bottom:1px solid #747a5544}
-.case-rule-flow span+span::before{content:'↓';margin-right:9px;color:#737b5b}
-.case-note{padding:12px 0;margin:12px 0 18px;border-top:1px solid #747a5544;font:400 12px/1.65 'Courier Prime','Courier New',monospace;color:#586148}
-.case-demo-figure{margin:8px 0 14px;padding:12px 0;border-top:1px solid #747a5544;border-bottom:1px solid #747a5544}
-.case-demo-figure strong{display:block;font:400 42px/1 'Cabin Display','Courier New',monospace}
-.case-demo-figure span{display:block;margin-top:7px;font:400 12px/1.3 'Cabin Display','Courier New',monospace;color:#62694e}
-.case-showcase{margin:14px 0 18px;padding:6px;border:1px solid #787e5e;background:#f1edda;box-shadow:2px 3px 0 #62684933}
-.case-showcase img{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;background:none}
-.case-showcase figcaption,.case-team-photo figcaption{margin-top:8px;font:400 12px/1.3 'Cabin Display','Courier New',monospace;color:#62694e}
-#card .case-section p{font-size:14px;line-height:1.65}
-.case-steps{font-size:14px;line-height:1.65}
-#card .case-caption{font-size:12px}
-.case-result-strip{padding:12px 0;margin:16px 0;border-top:1px solid #747a5544;font:400 18px/1.3 'Cabin Display','Courier New',monospace;color:#35412c}
-.case-result-strip span{display:block;font-size:15px;margin-top:3px;color:#62694e}
-.case-finalist-figure{margin:16px 0 20px;padding:18px 0;border-block:1px solid #747a5544}
-.case-finalist-figure strong{display:block;font:400 72px/1 'Cabin Display','Courier New',monospace;color:#35412c}
-.case-finalist-figure strong span{font-size:36px;color:#737a60}
-.case-finalist-figure>span{display:block;margin-top:10px;font:400 13px/1.3 'Cabin Display','Courier New',monospace;letter-spacing:.5px}
-.case-team-photo{align-self:center;width:min(100%,280px);margin:8px 0 16px;padding:6px;border:1px solid #787e5e;background:#f1edda}
-.case-team-photo img{display:block;width:100%;height:auto;aspect-ratio:3/4;background:none}
-.case-page-content:has(.case-team-photo) h2{font-size:32px;line-height:1.05;margin:12px 0 8px}
-.case-page-content:has(.case-team-photo)>.document-lead{display:none}
-.case-page-content:has(.case-team-photo:not([hidden])) .case-finalist-figure,.case-page-content:has(.case-team-photo:not([hidden])) .case-team-context{display:none}
-.case-page-content{height:100%;min-height:0;width:100%}
-#card .case-leaf p,#card .case-leaf .document-lead,#card .case-leaf .case-caption,.case-leaf .case-steps,.case-leaf .case-note{font:400 16px/1.5 'Courier Prime','Courier New',monospace;color:#293625;margin:10px 0 14px}
-.case-leaf .document-heading,.case-leaf .document-footnote,.case-showcase figcaption,.case-team-photo figcaption{font:400 16px/1.2 'Cabin Display','Courier New',monospace;letter-spacing:.3px;color:#4b513c}
-.case-leaf .document-heading{gap:10px}
-.case-leaf .document-heading span:last-child{max-width:55%;text-align:right}
-.case-leaf .document-footnote{padding-top:10px}
-.case-leaf .case-section h3{font-size:22px;line-height:1.15;margin-bottom:8px}
-.case-leaf h2,.case-page-content:has(.case-team-photo) h2{font-size:36px;line-height:1.05;margin:18px 0 12px}
-.case-leaf .case-section{margin:10px 0 4px}
-.case-leaf .case-steps li{margin-bottom:12px}
-.case-demo-figure span,.case-finalist-figure>span{font-size:16px}
-.case-showcase{align-self:center;width:100%;max-width:100%}
-.case-team-photo{width:min(100%,280px)}
-</style>
+<link rel="stylesheet" href="/src/styles/objects.css">
+<link rel="stylesheet" href="/src/styles/case-studies.css">
 </head>
 <body>
 <section id="ignition" aria-label="Turn the key to start the drive">
@@ -238,7 +46,7 @@ dialog.folder-card.case-study-card{left:50%;right:auto;transform:translate(-50%,
         <span class="paint-layer paint-visor" aria-hidden="true"><img src="/assets/visor-comic.png" alt="" draggable="false"></span><span class="object-tag">ABOUT</span><span class="visor-seam"></span>
         <img class="visor-photo" style="position:absolute;left:8.3%;top:23.4%;width:18.6%;height:50%;object-fit:cover;object-position:center 43%;z-index:2;clip-path:polygon(0 4%,91% 0,100% 95%,5% 100%)" src="/assets/martin-luspo.png" alt="Martin Luspo" draggable="false" width="96" height="96"><span class="visor-clip paint-layer paint-visor" style="z-index:4;clip-path:polygon(11.2% 0,16.7% 0,16.7% 28%,11.2% 28%)" aria-hidden="true"><img src="/assets/visor-comic.png" alt="" draggable="false"></span><span class="license"><span class="paperclip"></span><span class="license-text"><small>DRIVER / DEVELOPER</small><strong>MARTIN<br>LUSPO</strong><span>Frontend &amp; UI/UX Developer</span><i>Always taking the scenic route.</i></span></span>
       </button>
-      <div class="usb-mount"><button class="object usb" id="usb" data-k="projects" aria-label="Insert USB to turn on the radio and browse projects" aria-pressed="false"><span class="object-tag">PROJECTS</span><svg class="usb-cord" viewBox="-42 -34 126 105" aria-hidden="true"><path d="M-16 -28H58" stroke="#0d0d12" stroke-width="2.2" fill="none"/><path id="cord-left" d="M-16 -28 C-10 2 7 40 16 61" stroke="#0d0d12" stroke-width="2.2" fill="none"/><path id="cord-right" d="M58 -28 C52 2 32 40 23 61" stroke="#303642" stroke-width="2.2" fill="none"/></svg><span class="usb-drive"><span class="paint-layer paint-usb" aria-hidden="true"><img src="/assets/usb-comic.png" alt="" draggable="false"></span><span class="usb-lettering" aria-hidden="true">ML</span><span class="usb-face"><span>ML</span><i></i></span><span class="usb-side"></span><span class="usb-tip"><i></i><i></i></span></span></button></div>
+      <div class="usb-mount"><button class="object usb" id="usb" data-k="projects" aria-label="Projects" aria-pressed="false"><span class="object-tag">PROJECTS</span><svg class="usb-cord" viewBox="-42 -34 126 105" aria-hidden="true"><path d="M-16 -28H58" stroke="#0d0d12" stroke-width="2.2" fill="none"/><path id="cord-left" d="M-16 -28 C-10 2 7 40 16 61" stroke="#0d0d12" stroke-width="2.2" fill="none"/><path id="cord-right" d="M58 -28 C52 2 32 40 23 61" stroke="#303642" stroke-width="2.2" fill="none"/></svg><span class="usb-drive"><span class="paint-layer paint-usb" aria-hidden="true"><img src="/assets/usb-comic.png" alt="" draggable="false"></span><span class="usb-lettering" aria-hidden="true">ML</span><span class="usb-face"><span>ML</span><i></i></span><span class="usb-side"></span><span class="usb-tip"><i></i><i></i></span></span></button></div>
       <div class="radio-usb-port" aria-hidden="true"><span></span><i></i><i></i></div><div class="radio-display off" id="radio" aria-live="polite"><span class="radio-meta">USB AUDIO</span><strong>RADIO OFF</strong><span class="radio-message">Insert the USB to play.</span></div>
       <nav class="radio-socials" aria-label="Profile links on the radio">
         <a class="object radio-profile" href="https://github.com/mdluspo" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21v-4c-4 1-5-2-6-2m12 6v-4c0-1-1-2-1-2 4-1 6-2 6-6 0-1-1-2-2-3 0-1 0-2-1-3-2 0-3 1-3 1-2-1-4-1-6 0 0 0-1-1-3-1-1 1-1 2-1 3-1 1-2 2-2 3 0 4 2 5 6 6 0 0-1 1-1 2"/></svg><span class="object-tag">GITHUB ↗</span></a>
@@ -257,7 +65,7 @@ dialog.folder-card.case-study-card{left:50%;right:auto;transform:translate(-50%,
     </div></div></div>
   </div>
   <div id="crash-veil" aria-hidden="true"></div>
-  <p class="driving-hint" id="driving-hint">Move toward an edge to look around.</p>
+  <p class="driving-hint" id="driving-hint">Move to an edge to look around. Move back to the middle to stop.</p>
   <span id="edge-cue" aria-hidden="true"></span>
   <span id="progress" aria-live="polite">0 of 4 explored</span>
 </main>
@@ -271,5 +79,5 @@ dialog.folder-card.case-study-card{left:50%;right:auto;transform:translate(-50%,
 <template id="projects-content"><article class="project-document" id="project-document" aria-live="polite" aria-atomic="true"></article><nav class="project-pagination" aria-label="Browse project papers"><button id="project-previous" aria-label="Previous project"><span aria-hidden="true">←</span></button><span id="project-count" role="status"></span><button id="project-next" aria-label="Next project"><span aria-hidden="true">→</span></button></nav></template>
 <template id="contact-content"><article class="project-document connect-document"><header class="document-heading"><span>A NOTE FROM MARTIN</span><span>OPEN TO OPPORTUNITIES</span></header><h2>Let’s connect.</h2><p class="document-lead">Have an idea, an internship opportunity, or something you’d like to build together? I’d love to hear from you.</p><p class="connect-email">mdluspo122604@gmail.com</p><a class="project-link" href="mailto:mdluspo122604@gmail.com">Email me &#8599;</a><footer class="document-footnote">Thanks for stopping by. Let’s see where the road takes us.</footer></article></template>
 <noscript><section class="no-js"><h1>Martin Luspo</h1><p>Frontend &amp; UI/UX developer. Open to internships and collaborations.</p><a href="mailto:mdluspo122604@gmail.com">Email me</a> · <a href="https://github.com/mdluspo">GitHub</a> · <a href="https://elife-egovph.vercel.app">eLife project</a></section></noscript>
-<script type="module" src="/script.js?v=case-navigation-12"></script>
+<script type="module" src="/src/main.js"></script>
 </body></html>

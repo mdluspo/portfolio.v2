@@ -1,6 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {clearWorkspaceAnimations,pageTurnFrames} from '../dialog-motion.js';
+import {clearWorkspaceAnimations,pageTurnFrames,pageTurnDuration} from '../src/animations/dialog-motion.js';
+
+test('fast scrolling speeds up page turns while isolated small ticks retain a readable turn',()=>{
+  const normal=pageTurnDuration(50,300);
+  assert.ok(pageTurnDuration(50,30)<normal);
+  assert.ok(pageTurnDuration(250,300)<normal);
+  assert.equal(pageTurnDuration(-250,300),pageTurnDuration(250,300));
+  assert.ok(pageTurnDuration(10000,1)>=160);
+});
 
 test('returning to a workspace clears old filled fade-outs as well as active transitions',()=>{
   const animations=[

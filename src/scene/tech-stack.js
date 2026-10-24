@@ -1,4 +1,4 @@
-import {pinPlacements} from './pin-motion.js';
+import {pinPlacements} from '../animations/pin-motion.js';
 const svg = body => `<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 export const technologies = [
   {name:'TypeScript',symbol:'TS',tone:'#79959d',shape:'square'},

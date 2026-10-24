@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {projects,projectIndex,renderProject,renderCaseStudy,renderCasePages,caseSpreadIndex,caseSpreadCount,CASE_SPREAD_COUNT} from '../projects.js';
+import {projects,projectIndex,renderProject,renderCaseStudy,renderCasePages,caseSpreadIndex,caseSpreadCount,CASE_SPREAD_COUNT} from '../src/projects/projects.js';
 
 test('browsing project papers wraps in both directions',()=>{
   assert.equal(projects.length,3);
@@ -48,6 +48,21 @@ test('each binder contains two paper areas, its matching project, and navigation
     assert.ok(binder.includes('data-case-back')&&binder.includes('data-case-close'));
     assert.ok(binder.includes(i===0?'TEAM PIRACY++ / EGOVHACKATHON 2026':'CASE STUDY IN PREPARATION'));
   }
+});
+
+test('every case study has a direct project link on its first page',()=>{
+  for(let i=0;i<projects.length;i++){
+    const first=renderCasePages(i,0)[0];
+    assert.ok(first.includes(`href="${projects[i].url}"`));
+    assert.ok(first.includes(i===0?'Explore the prototype':'Open project'));
+    assert.ok(first.includes('target="_blank" rel="noopener noreferrer"'));
+  }
+});
+
+test('the prototype invitation appears only on the first page',()=>{
+  const pages=Array.from({length:caseSpreadCount(0)},(_,spread)=>renderCasePages(0,spread)).flat();
+  assert.ok(pages[0].includes('Explore the prototype'));
+  assert.ok(pages.slice(1).every(page=>!page.includes('Explore the prototype')));
 });
 
 test('eLife has a complete source-based case study without placeholder or invented impact claims',()=>{

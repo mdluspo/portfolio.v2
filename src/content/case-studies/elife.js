@@ -68,7 +68,7 @@ export const elifeCaseStudy = [
   {
     "section": "Team Piracy++",
     "title": "The people behind eLife.",
-    "body": "<figure class=\"case-team-photo\"><img src=\"/assets/egov_group.png\" alt=\"Team Piracy++ holding the eGovHackathon 2026 top-30 finalist award\" width=\"1536\" height=\"2048\"><figcaption>Team Piracy++ / eGovHackathon 2026 finalists</figcaption></figure>"
+    "body": "<div class=\"case-team-layout\"><figure class=\"case-team-photo\"><img src=\"/assets/egov_group.png\" alt=\"Team Piracy++ holding the eGovHackathon 2026 top-30 finalist award\" width=\"1536\" height=\"2048\"><figcaption>Team Piracy++<br>eGovHackathon 2026 finalists</figcaption></figure><section class=\"case-team-roster\" aria-label=\"Team members\"><h3>Team Piracy++</h3><ul><li>Mark Eron Diaz</li><li>John Janiel Obmerga</li><li>Kurt Laurence Tendero</li><li>Deux Marq Marquez</li><li>Martin Dominic Luspo</li></ul></section></div>"
   },
   {
     "section": "Reflection",
@@ -78,6 +78,6 @@ export const elifeCaseStudy = [
   {
     "section": "Next steps",
     "title": "A broader picture.",
-    "body": "<section class=\"case-section\"><h3>Extend the view</h3><p>An agency-side view of unclaimed eligibility by region is another proposed addition. It would extend the citizen experience into a broader picture of unmet needs.</p></section><p class=\"case-caption\">eLife is a hackathon prototype, with further validation and development ahead.</p><a class=\"project-link\" href=\"https://elife-egovph.vercel.app\" target=\"_blank\" rel=\"noopener noreferrer\">Explore the prototype ↗</a>"
+    "body": "<section class=\"case-section\"><h3>Extend the view</h3><p>An agency-side view of unclaimed eligibility by region is another proposed addition. It would extend the citizen experience into a broader picture of unmet needs.</p></section><p class=\"case-caption\">eLife is a hackathon prototype, with further validation and development ahead.</p>"
   }
 ];

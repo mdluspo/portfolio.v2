@@ -1,4 +1,4 @@
-import {elifeCaseStudy} from './case-studies/elife.js';
+import {elifeCaseStudy} from '../content/case-studies/elife.js';
 
 export const projects = [
   {name:'eLife', category:'CIVIC TECH / EGOVPH HACKATHON', url:'https://elife-egovph.vercel.app', preview:'/assets/projects/elife.png',
@@ -40,11 +40,11 @@ export function renderCasePages(index,spread=0){
   const leaf=(number,title,body)=>`<article class="case-leaf card-sheet" data-binding-side="${number%2?'right':'left'}"><span class="case-punch-holes" aria-hidden="true"><i></i><i></i><i></i></span><div class="case-page-content"><header class="document-heading"><span>${project.name.toUpperCase()} / CASE STUDY</span><span>${String(number).padStart(2,'0')} / ${title.toUpperCase()}</span></header>${body}<footer class="document-footnote">${caseStudy?'TEAM PIRACY++ / EGOVHACKATHON 2026':'CASE STUDY IN PREPARATION'}</footer></div></article>`;
   if(caseStudy){
     const start=caseSpreadIndex(spread,caseSpreadCount(index))*2;
-    return caseStudy.slice(start,start+2).map((page,i)=>leaf(start+i+1,page.section,`<h2>${page.title}</h2>${page.body}`));
+    return caseStudy.slice(start,start+2).map((page,i)=>leaf(start+i+1,page.section,`<h2>${page.title}</h2>${start+i===0?`<a class="project-link case-open-project" href="${project.url}" target="_blank" rel="noopener noreferrer">Explore the prototype &#8599;</a>`:''}${page.body}`));
   }
   const placeholder=(label,copy)=>`<div class="case-placeholder"><span>${label}</span><p>${copy}</p><div class="case-writing-lines" aria-hidden="true"></div></div>`;
   if(caseSpreadIndex(spread)===0)return[
-    leaf(1,'Overview',`<h2>${project.name}</h2><p class="case-category">${project.category}</p><p class="document-lead">${project.description}</p>${placeholder('THE BRIEF','The story behind the project will go here.')}`),
+    leaf(1,'Overview',`<h2>${project.name}</h2><a class="project-link case-open-project" href="${project.url}" target="_blank" rel="noopener noreferrer">Open project &#8599;</a><p class="case-category">${project.category}</p><p class="document-lead">${project.description}</p>${placeholder('THE BRIEF','The story behind the project will go here.')}`),
     leaf(2,'The work',`<div class="case-image-mount"><img src="${project.preview}" alt="${project.name} project preview"></div>${placeholder('BEHIND THE SCENES','Space for the process, decisions, and details.')}`)
   ];
   if(caseSpreadIndex(spread)===1)return[

@@ -23,24 +23,33 @@ export function headlinerBottom(height, viewHeight, home) {
   // Account for the curved SVG edge so the ceiling also covers wide desktop viewports.
   return (crop + 58 + height * .1) / (154 / 180) - height * .1;
 }
-// Broad edge zones turn the view; the middle stays calm.
-export function edgeIntent(position, size, zone = .28) {
-  const normalized = position / size;
-  if (normalized < zone) return -Math.pow(clamp((zone - normalized) / zone, 0, 1), 1.25);
-  if (normalized > 1 - zone) return Math.pow(clamp((normalized - (1 - zone)) / zone, 0, 1), 1.25);
+// Edge zones select a complete view rather than tracking pointer distance.
+export function edgeIntent(position, size, zone = .18) {
+  if (position < size * zone) return -1;
+  if (position > size * (1 - zone)) return 1;
   return 0;
 }
 export function lookTarget(pointer, viewport, current, limits) {
   const x = edgeIntent(pointer.x, viewport.width);
-  // The lower half is a broad look-down zone; no need to hunt for the bottom edge.
-  const lower = Math.pow(clamp((pointer.y / viewport.height - .5) / .2, 0, 1), .7);
-  const y = lower || edgeIntent(Math.min(pointer.y, viewport.height * .5), viewport.height, .22);
-  return constrain({x: x ? -x * limits.right : current.x,
-    y: y < 0 ? limits.home + -y * (limits.bottom - limits.home)
-      : y > 0 ? limits.home - y * (limits.home - limits.top) : current.y}, limits);
+  const y = edgeIntent(pointer.y, viewport.height);
+  return constrain({x: x < 0 ? limits.right : x > 0 ? limits.left : current.x,
+    y: y < 0 ? limits.bottom : y > 0 ? limits.top : current.y}, limits);
 }
 export const ease = (current, target, speed, delta) => current + (target - current) * (1 - Math.exp(-speed * delta));
-export function advance(current, target, delta, maxSpeed = 230) {
-  const step = ease(current, target, 4.8, delta) - current;
+// A fixed duration keeps long pans just as quick as short ones, with no lingering tail.
+export function panStep(current, target, delta, previous = null) {
+  const duration = .28;
+  if (current === target) return {position: target, from: target, to: target, elapsed: 0};
+  const state = previous?.to === target ? previous : {from: current, to: target, elapsed: 0};
+  const elapsed = Math.min(duration, state.elapsed + delta);
+  const progress = elapsed / duration;
+  // Reach most of the distance early, reserving more time for a soft landing.
+  const shaped = 1 - Math.pow(1 - progress, 1.5);
+  const smooth = shaped * shaped * shaped * (shaped * (shaped * 6 - 15) + 10);
+  return {from: state.from, to: target, elapsed,
+    position: elapsed >= duration ? target : state.from + (target - state.from) * smooth};
+}
+export function advance(current, target, delta, maxSpeed = 230, response = 4.8) {
+  const step = ease(current, target, response, delta) - current;
   return current + clamp(step, -maxSpeed * delta, maxSpeed * delta);
 }

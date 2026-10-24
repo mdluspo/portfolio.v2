@@ -14,3 +14,8 @@ export function pageTurnFrames(direction, shiftX=0, shiftY=0) {
     {offset:1,transform:`translate3d(${shiftX}px,${shiftY}px,1px) rotateY(${-sign*180}deg)`}
   ];
 }
+
+export function pageTurnDuration(amount, interval) {
+  const intensity=Math.max(1,Math.abs(amount)/100,interval<90?1.8:1);
+  return Math.max(160,480/intensity);
+}

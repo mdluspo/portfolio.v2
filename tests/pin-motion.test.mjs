@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPinMotion,stepPinMotion,pinPlacements} from '../pin-motion.js';
-import {drivingAcceleration} from '../motion.js';
+import {createPinMotion,stepPinMotion,pinPlacements} from '../src/animations/pin-motion.js';
+import {drivingAcceleration} from '../src/driving/motion.js';
 
 test('loose pins shift independently under road bumps and stay within the tray scatter',()=>{
   for(const fps of [30,60,120]){

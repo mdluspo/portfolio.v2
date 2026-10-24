@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {usbFlightFrames,usbTransform} from '../usb-flight.js';
+import {usbFlightFrames,usbTransform} from '../src/animations/usb-flight.js';
 
 const pose=frame=>{
  const values=[...frame.transform.matchAll(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi)].map(match=>Number(match[0]));

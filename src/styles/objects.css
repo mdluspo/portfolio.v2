@@ -1,0 +1,53 @@
+
+/* The object layouts travel with their markup so a stale stylesheet cannot flatten them. */
+.painted-tablet{position:relative;aspect-ratio:3/2;clip-path:inset(4.5% 1.8% 4.4% round 5.3% / 8%)}
+.painted-tablet .tablet-frame-art{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;z-index:0;filter:saturate(.8) brightness(.96)}
+.painted-tablet .tablet-screen{position:absolute;left:6.8%;top:12.3%;width:86.5%;height:75.9%;aspect-ratio:auto;overflow:hidden;background:#080b10;border:0;border-radius:12px;z-index:1;box-shadow:inset 0 0 3px #000}
+.painted-tablet .tablet-screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.id-card-dialog .dialog-stack,.id-card-dialog .card-sheet{display:contents}
+.id-card-dialog #category,.id-card-dialog #card-title,.id-card-dialog .card-bottom{display:none}
+/* About is the ID itself, examined as a two-sided object. */
+dialog.id-card-dialog{position:fixed;top:50%;margin:0;left:50%;right:auto;transform:translate(-50%,-50%);width:min(590px,calc(100% - 50px));max-height:none;overflow:visible;padding:0;border:0;background:transparent;box-shadow:none}
+dialog.id-card-dialog[open]{animation:none}
+.id-card-dialog .dialog-workspace{display:block}
+.id-card-dialog .card-category,.id-card-dialog .card-heading,.id-card-dialog .card-bottom{display:none}
+.id-card-dialog #close{top:-45px;right:-2px;color:#e9e4ce;background:#182019cc;border:1px solid #888c72;width:36px;height:36px;font-size:26px}
+.id-inspection{perspective:1400px}
+.id-turntable{position:relative;aspect-ratio:1.65;transform-style:preserve-3d;transform:rotateX(var(--inspect-x,0deg)) rotateY(calc(var(--id-turn,0deg) + var(--inspect-y,0deg)));transition:transform .7s cubic-bezier(.2,.7,.25,1)!important;cursor:grab}
+.id-turntable:active{cursor:grabbing}
+.id-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid #242c20;border-radius:4px 2px 5px 3px;padding:28px 30px;background:linear-gradient(153deg,#66765326 0 12%,transparent 12% 89%,#52654330 89%),linear-gradient(28deg,#67774e20 0 17%,transparent 17% 94%,#e1e6c340 94%),linear-gradient(103deg,#a8b098,#cbd0b7 14%,#d6d9bf 74%,#a8b397);color:#263421;box-shadow:inset 1px 2px 0 #e8ebce88,inset -3px -3px 0 #62735655,3px 5px 0 #151f16,6px 10px 18px #060d0866}
+.id-face::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;background:center/100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360'%3E%3Cg fill='none' stroke='%23313e2a' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='m6 19 14-13m-13 20 20-19m-16 24 13-13m556-8 13 11m-19-8 18 16M7 326l18 22m-18-12 10 12m560 1 16-19m-23 18 21-25M37 5l57-1m10 1 22 1m337 349 63-1m12 0 24-2'/%3E%3C/g%3E%3C/svg%3E")}
+.id-heading,.id-detail,.id-inspect-controls{font-family:'Cabin Display','Courier New',monospace;letter-spacing:1px}
+.id-heading{display:block;font-size:15px;color:#5d654c}
+.id-front-layout{display:grid;grid-template-columns:30% 1fr;gap:27px;align-items:center;margin:18px 0}
+.id-photo{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border:1px solid #4b553e;filter:saturate(.8);box-shadow:2px 2px 0 #6c735a}
+.id-identity h2{font-family:'Cabin Display','Courier New',monospace;font-size:clamp(31px,5vw,48px);line-height:.93;margin:0 0 10px;color:#212c1f}
+.id-identity p{font-size:15px;line-height:1.3;margin:0 0 8px;color:#3e4a33}
+.id-identity>span{font-size:11px;color:#5e684e}
+.id-rule{height:1px;background:#68705266;margin-bottom:13px}
+.id-detail{font-size:11px;color:#5a6549}
+.id-back{transform:rotateY(180deg)}
+.id-back h2{font-size:29px;margin:16px 0 12px}
+.id-back p{font-size:14px;line-height:1.55;margin:10px 0;color:#3a4832}
+.id-back a{display:inline-block;font-size:13px;color:#3b5361;margin:6px 0;text-underline-offset:4px}
+.id-back a:hover{color:#3f718e}
+.id-barcode{height:24px;width:38%;margin:15px 0 9px;background:repeating-linear-gradient(90deg,#303c29 0 2px,transparent 2px 3px,#303c29 3px 4px,transparent 4px 7px,#303c29 7px 10px,transparent 10px 12px);opacity:.7}
+.id-inspect-controls{position:absolute;left:0;right:0;top:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:24px;color:#dddcc5;font-size:15px;text-shadow:1px 2px #131b13}
+.id-inspect-controls button{font:inherit;border-bottom:1px solid #aeb297;padding:8px 0;color:#eee8d3;min-height:42px}
+.id-inspect-controls button:hover{color:#a6bdc6;border-color:#a6bdc6}
+@media(max-width:600px){dialog.id-card-dialog{width:calc(100% - 32px)}.id-face{padding:22px}.id-turntable{aspect-ratio:1.35}.id-front-layout{gap:17px;margin:20px 0}.id-identity p{font-size:13px}.id-identity>span{font-size:10px}.id-detail{font-size:10px}.id-back p{font-size:12px}.id-back h2{font-size:25px;margin:12px 0}.id-heading{font-size:13px}.id-barcode{margin:10px 0 7px;height:20px}.id-inspect-controls{font-size:13px}}
+
+/* A quiet, fixed shortcut menu complements the physical car controls. */
+#quick-nav{position:fixed;right:24px;top:22px;z-index:60;font-family:'Cabin Display','Courier New',monospace}
+#quick-toggle{display:grid;place-items:center;margin-left:auto;width:48px;height:46px;padding:0;border:1px solid #818672;border-radius:4px;background:linear-gradient(145deg,#394139,#222b23);color:#e1e1c9;box-shadow:2px 3px 0 #10180f,inset 1px 1px 0 #b9bf9455;cursor:pointer}
+#quick-toggle:hover{background:#404c3b}
+.quick-lines{position:relative;display:block;width:23px;height:18px}
+.quick-lines i{position:absolute;left:0;right:0;height:2px;border-radius:1px;background:currentColor;transition:transform .15s ease,opacity .15s ease}
+.quick-lines i:first-child{top:0}.quick-lines i:nth-child(2){top:8px}.quick-lines i:last-child{top:16px}
+.expanded .quick-lines i:first-child{transform:translateY(8px) rotate(45deg)}.expanded .quick-lines i:nth-child(2){opacity:0}.expanded .quick-lines i:last-child{transform:translateY(-8px) rotate(-45deg)}
+#quick-panel{position:absolute;right:0;top:58px;width:244px;max-height:calc(100dvh - 100px);overflow-y:auto;overscroll-behavior:contain;padding:14px 12px 12px;border:2px solid #101b12;border-radius:4px;background:linear-gradient(140deg,#424b3e,#273226 55%,#202a22);box-shadow:inset 1px 1px 0 #a4ad7b44,4px 5px 0 #0e170fcc,0 8px 22px #0005;color:#e5e4cc}
+#quick-panel[hidden]{display:none}
+#quick-panel>small{display:block;padding:5px 10px 12px;font-size:12px;letter-spacing:1.3px;color:#a8b094;border-bottom:1px solid #b8c29a33;margin-bottom:5px}
+#quick-panel>button,#quick-panel>a{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:42px;padding:9px 10px;border:0;border-radius:2px;background:none;font:inherit;font-size:21px;color:inherit;text-decoration:none;text-align:left;cursor:pointer}
+#quick-panel>button:hover,#quick-panel>a:hover,#quick-panel>button:focus-visible,#quick-panel>a:focus-visible{color:#f0f0d8;background:#96a58029;outline:1px solid #aeb792;outline-offset:0}
+@media(max-width:600px){#quick-nav{right:15px;top:15px}#quick-panel{width:min(244px,calc(100vw - 30px))}}

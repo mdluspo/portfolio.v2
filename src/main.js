@@ -1,15 +1,15 @@
-import {layout, bounds, constrain, lookTarget, ease, advance} from './camera.js';
+import {layout, bounds, constrain, lookTarget, ease, panStep} from './driving/camera.js';
 
-import {drivingPose, drivingAcceleration, steeringPose, createPendulum, stepPendulum} from './motion.js';
-import {headlinerBottom} from './camera.js';
-import {createDrive, accelerate, accelerateSteering, advanceDrive, depthAt, rearDepthAt, SCENERY_PACE, CRUISE_SPEED, MAX_SPEED} from './drive.js';
-import {renderPins} from './tech-stack.js';
-import {createPinMotion,stepPinMotion} from './pin-motion.js';
-import {ignitionPose,keyringRotation} from './ignition-motion.js';
-import {usbFlightFrames} from './usb-flight.js';
-import {wheelContains,wheelScrollTurn,createCrash,advanceCrash,crashPose,shouldCrash} from './crash.js';
-import {projects,projectIndex,renderProject,renderCaseStudy,renderCasePages,caseSpreadIndex,caseSpreadCount} from './projects.js?v=case-navigation-12';
-import {clearWorkspaceAnimations,pageTurnFrames} from './dialog-motion.js';
+import {drivingPose, drivingAcceleration, steeringPose, createPendulum, stepPendulum} from './driving/motion.js';
+import {headlinerBottom} from './driving/camera.js';
+import {createDrive, accelerate, accelerateSteering, advanceDrive, depthAt, rearDepthAt, SCENERY_PACE, CRUISE_SPEED, MAX_SPEED} from './driving/drive.js';
+import {renderPins} from './scene/tech-stack.js';
+import {createPinMotion,stepPinMotion} from './animations/pin-motion.js';
+import {ignitionPose,keyringRotation} from './animations/ignition-motion.js';
+import {usbFlightFrames} from './animations/usb-flight.js';
+import {wheelContains,wheelScrollTurn,createCrash,advanceCrash,crashPose,shouldCrash} from './driving/crash.js';
+import {projects,projectIndex,renderProject,renderCaseStudy,renderCasePages,caseSpreadIndex,caseSpreadCount} from './projects/projects.js';
+import {clearWorkspaceAnimations,pageTurnFrames,pageTurnDuration} from './animations/dialog-motion.js';
 
 const $ = selector => document.querySelector(selector);
 const app = $('#app'), stage = $('#stage'), card = $('#card'), ignition = $('#ignition');
@@ -28,7 +28,7 @@ const mouse = matchMedia('(hover: hover) and (pointer: fine)');
 const order = ['about', 'projects', 'glove', 'profiles'];
 const names = {about:'ABOUT', projects:'PROJECTS', glove:'GLOVEBOX', profiles:'PROFILES'};
 const objects = {about:$('.visor'), projects:usb, glove:$('#glove'), profiles:$('.radio-socials')};
-const interactionLabels={about:'About me',projects:'Insert USB',glove:'Glovebox',profiles:'Profile links'};
+const interactionLabels={about:'About me',projects:'Projects',glove:'Glovebox',profiles:'Profile links'};
 for(const [key,node] of Object.entries(objects)){
   node.classList.add('has-interaction-cue');
   const cue=document.createElement('span');
@@ -48,6 +48,7 @@ const loosePins=Array.from(document.querySelectorAll('.tech-pin'),node=>({node,s
 const seen = new Set();
 let started = false, starting = false, dragging = null, moved = false;
 let size = layout(innerWidth, innerHeight), camera = {x:0,y:0}, target = {x:0,y:0};
+let cameraPan={x:null,y:null};
 let velocity = {x:0,y:0}, pointer = null, keyboardInput = false;
 let priorTime = performance.now(), frame = 0, cueTime = 0;
 let drivingTime = 0;
@@ -276,6 +277,22 @@ function fitCasePages(){
     if(width<=0||height<=0)return;
     content.style.removeProperty('zoom');content.style.width=`${width}px`;
     content.style.height=`${height}px`;content.style.minHeight='0';
+    const teamLayout=content.querySelector('.case-team-layout');
+    if(teamLayout){
+      const photo=teamLayout.querySelector('.case-team-photo'),caption=photo.querySelector('figcaption');
+      const photoStyles=getComputedStyle(photo),captionStyles=getComputedStyle(caption);
+      const frameWidth=parseFloat(photoStyles.paddingLeft)+parseFloat(photoStyles.paddingRight)+2;
+      const frameHeight=parseFloat(photoStyles.paddingTop)+parseFloat(photoStyles.paddingBottom)+2;
+      const columnWidth=parseFloat(getComputedStyle(teamLayout).gridTemplateColumns);
+      // Size the paper around the portrait, instead of letterboxing the image inside a wide frame.
+      photo.style.removeProperty('width');
+      for(let i=0;i<3;i++){
+        const captionHeight=caption.offsetHeight+parseFloat(captionStyles.marginTop);
+        const imageHeight=Math.max(0,teamLayout.clientHeight-frameHeight-captionHeight-8);
+        photo.style.width=`${Math.min(columnWidth,imageHeight*.75+frameWidth)}px`;
+      }
+      leaf.scrollTop=0;return;
+    }
     const figure=content.querySelector('.case-team-photo,.case-showcase');
     if(figure){
       figure.style.removeProperty('width');
@@ -294,7 +311,7 @@ function fitCasePages(){
 }
 addEventListener('resize',()=>{cancelCaseTurn();fitCasePages();});
 card.addEventListener('load',event=>{if(event.target.matches('.case-image-mount img,.case-showcase img,.case-team-photo img'))fitCasePages();},true);
-async function turnCasePage(direction){
+async function turnCasePage(direction,duration=480){
   const workspace=$('.case-workspace');
   if(!card.open||!card.classList.contains('case-study-card')||workspace.inert||caseTurning||cardClosing||card.classList.contains('case-opening'))return;
   const count=caseSpreadCount(selectedProject);
@@ -327,7 +344,6 @@ async function turnCasePage(direction){
   Object.assign(bindingLayer.style,{inset:'auto',left:`${bindingRect.left-workspaceRect.left+workspace.scrollLeft}px`,top:`${bindingRect.top-workspaceRect.top+workspace.scrollTop}px`,width:`${bindingRect.width}px`,height:`${bindingRect.height}px`,transform:'none'});
   workspace.append(bindingLayer);
   sheet.style.transformOrigin=direction>0?'0 50%':'100% 50%';
-  const duration=650;
   const source=stacks[outgoingIndex],target=stacks[incomingIndex];
   const reflectedLeft=source.offsetLeft+(direction>0?-source.offsetWidth:source.offsetWidth);
   const frames=pageTurnFrames(direction,target.offsetLeft-reflectedLeft,target.offsetTop-source.offsetTop);
@@ -350,17 +366,22 @@ async function turnCasePage(direction){
   $('[data-case-page="-1"]').disabled=next===0;$('[data-case-page="1"]').disabled=next===count-1;
   try{await Promise.all(caseTurnAnimations.map(animation=>animation.finished));}
   catch{return;}
-  finally{if(revision===caseTurnRevision){cancelCaseTurn();fitCasePages();caseWheelCooldownUntil=performance.now()+60;}}
+  finally{if(revision===caseTurnRevision){cancelCaseTurn();fitCasePages();caseWheelCooldownUntil=0;}}
 }
 card.addEventListener('wheel',event=>{
   if(!card.classList.contains('case-study-card')||event.ctrlKey||Math.abs(event.deltaY)<=Math.abs(event.deltaX))return;
   event.preventDefault();event.stopPropagation();
   const amount=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
   const now=performance.now(),elapsed=now-caseWheelAt;caseWheelAt=now;
-  if(caseTurning||$('.case-workspace').inert||now<caseWheelCooldownUntil)return;
+  if($('.case-workspace').inert||now<caseWheelCooldownUntil)return;
+  const duration=pageTurnDuration(amount,elapsed);
+  if(caseTurning){
+    for(const animation of caseTurnAnimations)animation.playbackRate=Math.max(animation.playbackRate||1,480/duration);
+    return;
+  }
   if(elapsed>450||Math.sign(amount)!==Math.sign(caseWheelTotal))caseWheelTotal=0;
   caseWheelTotal+=amount;
-  if(Math.abs(caseWheelTotal)>=45)turnCasePage(Math.sign(caseWheelTotal));
+  if(Math.abs(caseWheelTotal)>=45)turnCasePage(Math.sign(caseWheelTotal),duration);
 },{passive:false});
 card.addEventListener('keydown',event=>{
   if(!card.classList.contains('case-study-card')||!['ArrowDown','ArrowUp','ArrowRight','ArrowLeft','PageDown','PageUp'].includes(event.key))return;
@@ -501,11 +522,14 @@ card.addEventListener('keydown',event=>{
   event.preventDefault();switchProject(event.key==='ArrowLeft'?-1:1);
 });
 card.addEventListener('wheel',event=>{
-  if(!card.classList.contains('folder-card')||event.ctrlKey||Math.abs(event.deltaX)<=Math.abs(event.deltaY))return;
-  event.preventDefault();
+  if(!card.open||!card.classList.contains('folder-card')||card.classList.contains('case-study-card')||card.classList.contains('contact-card')||event.ctrlKey)return;
+  const vertical=Math.abs(event.deltaY)>=Math.abs(event.deltaX);
+  const delta=vertical?event.deltaY:event.deltaX;
+  if(!delta)return;
+  event.preventDefault();event.stopPropagation();
   const now=performance.now();
   if(now-paperScrollAt<380)return;
-  const amount=event.deltaX*(event.deltaMode===1?16:event.deltaMode===2?innerWidth:1);
+  const amount=delta*(event.deltaMode===1?16:event.deltaMode===2?(vertical?innerHeight:innerWidth):1);
   if(Math.sign(amount)!==Math.sign(paperScrollTotal))paperScrollTotal=0;
   paperScrollTotal+=amount;
   if(Math.abs(paperScrollTotal)>=45){switchProject(Math.sign(paperScrollTotal));paperScrollTotal=0;paperScrollAt=now;}
@@ -536,7 +560,7 @@ usb.addEventListener('click',()=>{
   usbFlightFocus=true;
   $('.radio-usb-port').classList.toggle('guiding',inserted);
   usb.setAttribute('aria-pressed',String(inserted));
-  usb.setAttribute('aria-label',inserted?'Remove USB and turn off the radio':'Insert USB to turn on the radio and browse projects');
+  usb.setAttribute('aria-label','Projects');
   radioOff();
   const destination=inserted?{
     x:parseFloat(stage.style.getPropertyValue('--dock-x')),
@@ -546,7 +570,7 @@ usb.addEventListener('click',()=>{
   const finish=()=>{
     if(revision!==usbRevision) return;
     usb.classList.toggle('docked',inserted);
-    usb.querySelector('.interaction-label').textContent=inserted?'Remove USB':'Insert USB';
+    usb.querySelector('.interaction-label').textContent='Projects';
     usb.classList.remove('transitioning'); usbAnimation?.cancel();usbAnimation=null;usbFlightFocus=false;
     $('.radio-usb-port').classList.remove('guiding');
     if(inserted){
@@ -582,15 +606,18 @@ addEventListener('keydown',event=>{
 $('#resume-paper').addEventListener('click',()=>{mark('glove');stopLook();});
 $('#connect-paper').addEventListener('click',()=>{mark('glove');showCard('contact','Let’s connect.','FROM THE GLOVEBOX',$('#connect-paper'));});
 
-// Edge position controls the desired view directly. No click or dragging is needed on desktop.
+// Register edge intent immediately, even if the cursor exits before the next frame.
 app.addEventListener('pointermove',event=>{
   if(event.pointerType!=='mouse'||dragging||usbFlightFocus||crash||menuOpen||!started||card.open) return;
-  const overControl=event.target.closest('button, a');
-  if(overControl&&event.clientY<innerHeight*.7) {stopLook();return;}
-  // Controls near the bottom must not block looking farther down the dashboard.
-  pointer={x:overControl?innerWidth*.5:event.clientX,y:event.clientY};
+  pointer={x:event.clientX,y:event.clientY};
+  target=lookTarget(pointer,{width:innerWidth,height:innerHeight},camera,limits());
+  velocity={x:0,y:0};
 });
-app.addEventListener('pointerleave',()=>{pointer=null;});
+app.addEventListener('pointerleave',event=>{
+  if(event.pointerType!=='mouse'||dragging||usbFlightFocus||crash||menuOpen||!started||card.open)return;
+  target=lookTarget({x:event.clientX,y:event.clientY},{width:innerWidth,height:innerHeight},target,limits());
+  pointer=null;velocity={x:0,y:0};
+});
 app.addEventListener('wheel',event=>{
   if(!started||card.open||event.ctrlKey) return;
   event.preventDefault();
@@ -689,8 +716,8 @@ function freshCar(){
   wheelGestureStart=null;wheelScrollTravel=0;
   usbAnimation?.cancel();usbAnimation=null;++usbRevision;usbFlightFocus=false;inserted=false;
   usb.classList.remove('docked','transitioning');usb.style.removeProperty('transform');
-  usb.setAttribute('aria-pressed','false');usb.setAttribute('aria-label','Insert USB to turn on the radio and browse projects');
-  usb.querySelector('.interaction-label').textContent='Insert USB';
+  usb.setAttribute('aria-pressed','false');usb.setAttribute('aria-label','Projects');
+  usb.querySelector('.interaction-label').textContent='Projects';
   usbBody.style.removeProperty('transform');usbPendulum=createPendulum(.04);radioOff();
   setGlove(false);app.classList.remove('crashed');
   crashTree.hidden=true;
@@ -809,12 +836,19 @@ function tick(time) {
     if(collision&&!collision.fresh){
       target=constrain({x:0,y:Math.min(limits().home,limits().top+size.height*.055)},limits());
     }else if(!dragging) {
-      if(pointer) {target=lookTarget(pointer,{width:innerWidth,height:innerHeight},target,limits());velocity={x:0,y:0};}
+      if(pointer) {target=lookTarget(pointer,{width:innerWidth,height:innerHeight},camera,limits());velocity={x:0,y:0};}
       else {target.x+=velocity.x*delta;target.y+=velocity.y*delta;velocity.x*=Math.exp(-7*delta);velocity.y*=Math.exp(-9*delta);}
     }
     target=constrain(target,limits());
-    camera.x=dragging&&reduced.matches?target.x:dragging?ease(camera.x,target.x,17,delta):advance(camera.x,target.x,delta,reduced.matches?110:230);
-    camera.y=dragging&&reduced.matches?target.y:ease(camera.y,target.y,dragging?17:6.2,delta);
+    if(dragging){
+      cameraPan={x:null,y:null};
+      camera.x=dragging&&!reduced.matches?ease(camera.x,target.x,17,delta):target.x;
+      camera.y=dragging&&!reduced.matches?ease(camera.y,target.y,17,delta):target.y;
+    }else{
+      cameraPan.x=panStep(camera.x,target.x,delta,cameraPan.x);
+      cameraPan.y=panStep(camera.y,target.y,delta,cameraPan.y);
+      camera.x=cameraPan.x.position;camera.y=cameraPan.y.position;
+    }
     camera=constrain(camera,limits());
     stage.style.setProperty('--pan-x',`${camera.x.toFixed(3)}px`);stage.style.setProperty('--pan-y',`${camera.y.toFixed(3)}px`);
     stage.style.setProperty('--outside-x',`${(-camera.x*.72).toFixed(3)}px`);stage.style.setProperty('--outside-y',`${(-camera.y*.72).toFixed(3)}px`);

@@ -1,0 +1,71 @@
+import fs from 'node:fs';
+import test from 'node:test';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import {parseHTML} from 'linkedom';
+
+test('case study navigation works for every project and recovers a stale transition',async()=>{
+const {window,document}=parseHTML(fs.readFileSync(new URL('../index.html',import.meta.url),'utf8'));
+const errors=[];
+const proto=window.HTMLElement.prototype;
+proto.getBoundingClientRect=function(){return {left:0,top:0,right:400,bottom:500,width:400,height:500};};
+for(const [name,value] of Object.entries({clientWidth:400,clientHeight:500,scrollHeight:350,offsetWidth:400,offsetHeight:500,offsetLeft:0,offsetTop:0}))Object.defineProperty(proto,name,{get(){return value;},configurable:true});
+proto.getAnimations=function(){return this._animations?.filter(a=>!a.cancelled)||[];};
+proto.animate=function(){const animation={cancel(){this.cancelled=true;},finished:Promise.resolve()};(this._animations??=[]).push(animation);return animation;};
+proto.focus=function(){};
+const card=document.querySelector('#card');
+card.showModal=function(){this.open=true;};
+card.close=function(){this.open=false;this.dispatchEvent(new window.Event('close'));};
+const modules=await Promise.all(['driving/camera','driving/motion','driving/drive','scene/tech-stack','animations/pin-motion','animations/ignition-motion','animations/usb-flight','driving/crash','projects/projects','animations/dialog-motion'].map(name=>import(`../src/${name}.js`)));
+const context=vm.createContext(Object.assign({document,console:{...console,error:(...args)=>errors.push(args)},innerWidth:1440,innerHeight:1000,performance,matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(){},requestAnimationFrame:()=>1,cancelAnimationFrame(){},setTimeout,clearTimeout,getComputedStyle:()=>({paddingLeft:'30',paddingRight:'30',paddingTop:'28',paddingBottom:'28',transform:'none'})},...modules));
+const source=fs.readFileSync(new URL('../src/main.js',import.meta.url),'utf8').replace(/^import .*?;\r?\n/gm,'');
+vm.runInContext(source,context);
+const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+vm.runInContext('started=true;',context);
+const moveCamera=(type,x,y)=>{
+  const event=new window.Event(type);
+  Object.assign(event,{pointerType:'mouse',clientX:x,clientY:y});
+  document.querySelector('#app').dispatchEvent(event);
+};
+moveCamera('pointermove',720,995);
+assert.equal(vm.runInContext('target.y===limits().top',context),true,'Edge intent is registered before a frame renders');
+moveCamera('pointerleave',720,1000);
+assert.equal(vm.runInContext('target.y===limits().top&&pointer===null',context),true,'Exiting the browser retains the full downward destination');
+moveCamera('pointermove',720,500);
+assert.equal(vm.runInContext('target.y===camera.y',context),true,'Returning to the center still stops movement');
+for(let index=0;index<3;index++){
+  vm.runInContext(`selectedProject=${index};started=true;inserted=true;showCard('projects',projects[selectedProject].name,'PROJECT FILES');`,context);
+  const button=document.querySelector('[data-open-case-study]');
+  assert.ok(button,'Project has a case study button');
+  button.click();await settle();
+  assert.ok(card.classList.contains('case-study-card'),`Project ${index} opens binder`);
+  assert.equal(document.querySelector('.case-workspace').hidden,false);
+  assert.equal(document.querySelector('.case-workspace').inert,false);
+  document.querySelector('[data-case-back]').click();await settle();
+  assert.equal(card.classList.contains('case-study-card'),false,'Back returns to project');
+  assert.equal(document.querySelector('.dialog-workspace').hidden,false);
+}
+assert.equal(errors.length,0);
+vm.runInContext("selectedProject=0;showCard('projects','Projects','PROJECT FILES');",context);
+const scrollPaper=(deltaY,deltaX=0,ctrlKey=false)=>{
+  vm.runInContext('paperScrollAt=-Infinity;',context);
+  const event=new window.Event('wheel',{bubbles:true,cancelable:true});
+  Object.assign(event,{deltaY,deltaX,deltaMode:0,ctrlKey});
+  document.querySelector('#project-document').dispatchEvent(event);
+};
+scrollPaper(120);
+assert.equal(vm.runInContext('selectedProject',context),1,'Scrolling down on paper opens the next project');
+assert.equal(document.querySelector('#card-title').textContent,'Joshua Scents');
+scrollPaper(-120);
+assert.equal(vm.runInContext('selectedProject',context),0,'Scrolling up opens the previous project');
+scrollPaper(-120);
+assert.equal(vm.runInContext('selectedProject',context),2,'Scrolling wraps at the first project');
+scrollPaper(0,120);
+assert.equal(vm.runInContext('selectedProject',context),0,'Horizontal trackpad scrolling still works');
+scrollPaper(120,0,true);
+assert.equal(vm.runInContext('selectedProject',context),0,'Browser zoom gestures do not switch projects');
+vm.runInContext("showCard('projects','Projects','PROJECT FILES');card.classList.add('case-opening');cardTransition=null;",context);
+document.querySelector('[data-open-case-study]').click();await settle();
+assert.ok(card.classList.contains('case-study-card'),'A stale opening flag does not disable the button');
+assert.equal(errors.length,0);
+});
