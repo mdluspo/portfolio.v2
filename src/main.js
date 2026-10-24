@@ -106,7 +106,7 @@ function setQuickMenu(open,returnFocus=false){
   quickPanel.hidden=!menuOpen;
   quickNav.classList.toggle('expanded',menuOpen);
   quickToggle.setAttribute('aria-expanded',String(menuOpen));
-  quickToggle.setAttribute('aria-label',menuOpen?'Close portfolio menu':'Open portfolio menu');
+  quickToggle.setAttribute('aria-label',menuOpen?'Close Quick Access menu':'Open Quick Access menu');
   stopLook();
   if(menuOpen)quickPanel.animate([{opacity:0,transform:'translateY(-6px)'},{opacity:1,transform:'translateY(0)'}],{duration:140,easing:'ease-out'});
   if(returnFocus)quickToggle.focus({preventScroll:true});

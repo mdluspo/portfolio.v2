@@ -41,6 +41,8 @@ dialog.id-card-dialog[open]{animation:none}
 #quick-nav{position:fixed;right:24px;top:22px;z-index:60;font-family:'Cabin Display','Courier New',monospace}
 #quick-toggle{display:grid;place-items:center;margin-left:auto;width:48px;height:46px;padding:0;border:1px solid #818672;border-radius:4px;background:linear-gradient(145deg,#394139,#222b23);color:#e1e1c9;box-shadow:2px 3px 0 #10180f,inset 1px 1px 0 #b9bf9455;cursor:pointer}
 #quick-toggle:hover{background:#404c3b}
+#quick-toggle{position:relative}
+#quick-toggle>.quick-tag{left:auto;right:calc(100% + 12px);top:50%;bottom:auto;transform:translateY(-50%)}
 .quick-lines{position:relative;display:block;width:23px;height:18px}
 .quick-lines i{position:absolute;left:0;right:0;height:2px;border-radius:1px;background:currentColor;transition:transform .15s ease,opacity .15s ease}
 .quick-lines i:first-child{top:0}.quick-lines i:nth-child(2){top:8px}.quick-lines i:last-child{top:16px}
