@@ -37,6 +37,16 @@ dialog.id-card-dialog[open]{animation:none}
 .id-inspect-controls button:hover{color:#a6bdc6;border-color:#a6bdc6}
 @media(max-width:600px){dialog.id-card-dialog{width:calc(100% - 32px)}.id-face{padding:22px}.id-turntable{aspect-ratio:1.35}.id-front-layout{gap:17px;margin:20px 0}.id-identity p{font-size:13px}.id-identity>span{font-size:10px}.id-detail{font-size:10px}.id-back p{font-size:12px}.id-back h2{font-size:25px;margin:12px 0}.id-heading{font-size:13px}.id-barcode{margin:10px 0 7px;height:20px}.id-inspect-controls{font-size:13px}}
 
+/* A brief introduction follows ignition before handing over the cabin. */
+#identity-intro{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;text-align:center;background:#00000038;opacity:0;will-change:opacity}
+#identity-intro[hidden]{display:none}
+.identity-intro-copy{width:max-content;max-width:100%;color:#fafaf7;text-shadow:0 2px 14px #0008}
+.identity-intro-copy h1{margin:0;font:700 clamp(52px,14vw,204px)/.95 'Cabin Display','Courier New',monospace;letter-spacing:.01em;white-space:nowrap}
+.identity-intro-copy .identity-role{margin:0 0 12px;text-align:left;font:400 clamp(16px,2.3vw,30px)/1.3 'Cabin Display','Courier New',monospace}
+.identity-intro-copy .identity-tagline{margin:22px 0 0;font:400 clamp(17px,2.3vw,28px)/1.4 'Cabin Display','Courier New',monospace}
+.introducing #quick-nav,.introducing .driving-hint,.introducing #progress,.introducing #edge-cue{visibility:hidden}
+.introducing #app{will-change:filter;transition:none!important}
+
 /* A quiet, fixed shortcut menu complements the physical car controls. */
 #quick-nav{position:fixed;right:24px;top:22px;z-index:60;font-family:'Cabin Display','Courier New',monospace}
 #quick-toggle{display:grid;place-items:center;margin-left:auto;width:48px;height:46px;padding:0;border:1px solid #818672;border-radius:4px;background:linear-gradient(145deg,#394139,#222b23);color:#e1e1c9;box-shadow:2px 3px 0 #10180f,inset 1px 1px 0 #b9bf9455;cursor:pointer}

@@ -909,6 +909,51 @@ function renderRoad(distance){
 }
 renderRoad(0);
 const hint=$('#driving-hint');hint.textContent=mouse.matches?'Click a ring to explore · Scroll the wheel to steer':'Tap a ring to explore · Drag to look around';
+function showIdentityIntro(){
+  const intro=$('#identity-intro');
+  stopLook();app.inert=true;quickNav.inert=true;
+  document.body.classList.add('introducing');intro.hidden=false;
+  const timing={duration:5200,easing:'linear',fill:'both'};
+  const curve='cubic-bezier(.4,0,.2,1)';
+  let dismissing=false,finished=false;
+  const animations=[];
+  const textFade=intro.animate([
+    {offset:0,opacity:0,easing:curve},
+    {offset:.2,opacity:1},
+    {offset:.67,opacity:1,easing:curve},
+    {offset:1,opacity:0}
+  ],timing);
+  const blurFade=app.animate([
+    {offset:0,filter:'blur(0px)',easing:curve},
+    {offset:.2,filter:'blur(6px)'},
+    {offset:.67,filter:'blur(6px)',easing:curve},
+    {offset:1,filter:'blur(0px)'}
+  ],timing);
+  animations.push(textFade,blurFade);
+  const finish=()=>{
+    if(finished)return;
+    finished=true;intro.removeEventListener('click',dismiss);
+    intro.hidden=true;document.body.classList.remove('introducing');
+    animations.forEach(animation=>animation.cancel());
+    app.inert=false;quickNav.inert=false;app.focus({preventScroll:true});
+  };
+  const dismiss=event=>{
+    event.preventDefault();event.stopPropagation();
+    if(dismissing||finished)return;
+    dismissing=true;
+    const opacity=getComputedStyle(intro).opacity||'1';
+    const filter=getComputedStyle(app).filter||'blur(6px)';
+    const exitTiming={duration:900,easing:curve,fill:'both'};
+    const textExit=intro.animate([{opacity},{opacity:0}],exitTiming);
+    const blurExit=app.animate([{filter},{filter:'blur(0px)'}],exitTiming);
+    textFade.cancel();blurFade.cancel();
+    animations.push(textExit,blurExit);
+    Promise.all([textExit.finished,blurExit.finished]).then(finish,finish);
+  };
+  intro.addEventListener('click',dismiss);
+  const finishAutomatically=()=>{if(!dismissing)finish();};
+  Promise.all([textFade.finished,blurFade.finished]).then(finishAutomatically,finishAutomatically);
+}
 function startDrive(skipTurn = false) {
   if(started||starting)return;
   starting=true;
@@ -921,11 +966,11 @@ function startDrive(skipTurn = false) {
     ignition.classList.add('leaving');ignition.inert=true;
     setTimeout(()=>{
       ignition.hidden=true;
-      started=true;starting=false;document.body.classList.add('started');app.inert=false;
+      started=true;starting=false;document.body.classList.add('started');
+      showIdentityIntro();
       app.classList.add('engine-start');
       setTimeout(()=>app.classList.remove('engine-start'),950);
       setTimeout(()=>hint.classList.add('faded'),14000);
-      app.focus({preventScroll:true});
     },620);
   },skipTurn?0:(reduced.matches?680:1460));
 }
