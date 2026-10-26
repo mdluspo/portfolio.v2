@@ -1,12 +1,17 @@
 import {elifeCaseStudy} from '../content/case-studies/elife.js';
+import {joshuaScentsCaseStudy} from '../content/case-studies/joshua-scents.js';
+import {arrowkopoCaseStudy} from '../content/case-studies/arrowkopo.js';
 
 export const projects = [
   {name:'eLife', category:'CIVIC TECH / EGOVPH HACKATHON', url:'https://elife-egovph.vercel.app', preview:'/assets/projects/elife.png',
-    description:'An eGovPH hackathon project that itemizes unclaimed citizen benefits using verified records, deterministic rules, and auditable eligibility receipts.'},
+    description:'An eGovPH hackathon project that itemizes unclaimed citizen benefits using verified records, deterministic rules, and auditable eligibility receipts.',
+    caseStudy:elifeCaseStudy, caseStudyCredit:'TEAM PIRACY++ / EGOVHACKATHON 2026', caseStudyLinkLabel:'Explore the prototype'},
   {name:'Joshua Scents', category:'FRAGRANCE / WEBSITE PROTOTYPE', url:'https://joshua-scents.vercel.app', preview:'/assets/projects/joshua-scents.png',
-    description:'A fragrance website prototype built for a friend, exploring clean product browsing, scent discovery, and a polished brand feel.'},
+    description:'A fragrance website prototype built for a friend, exploring clean product browsing, scent discovery, and a polished brand feel.',
+    caseStudy:joshuaScentsCaseStudy, caseStudyCredit:'DECANTS BY JOSHUA / WEBSITE PROTOTYPE', caseStudyLinkLabel:'Open project'},
   {name:'ARROWKOPO', category:'HTML5 CANVAS / ARCADE SURVIVAL', url:'https://arrowkopo.vercel.app', preview:'/assets/projects/arrowkopo.png',
-    description:'A retro-futuristic HTML5 Canvas arcade survival game with inertia movement, dash mechanics, enemy waves, laser hazards, and cybernetic power-ups.'}
+    description:'A retro-futuristic HTML5 Canvas arcade survival game with inertia movement, dash mechanics, enemy waves, laser hazards, and cybernetic power-ups.',
+    caseStudy:arrowkopoCaseStudy, caseStudyCredit:'ARROWKOPO / SYSTEM OVERDRIVE V1.3.0', caseStudyLinkLabel:'Play the game'}
 ];
 
 export const projectIndex = index => ((index % projects.length) + projects.length) % projects.length;
@@ -32,15 +37,15 @@ export function renderCaseStudy(index) {
 }
 
 export const CASE_SPREAD_COUNT=3;
-export const caseSpreadCount=index=>projects[projectIndex(index)].name==='eLife'?Math.ceil(elifeCaseStudy.length/2):CASE_SPREAD_COUNT;
+export const caseSpreadCount=index=>Math.ceil((projects[projectIndex(index)].caseStudy?.length||CASE_SPREAD_COUNT*2)/2);
 export const caseSpreadIndex=(index,count=CASE_SPREAD_COUNT)=>Math.max(0,Math.min(count-1,index));
 export function renderCasePages(index,spread=0){
   const project=projects[projectIndex(index)];
-  const caseStudy=project.name==='eLife'?elifeCaseStudy:null;
-  const leaf=(number,title,body)=>`<article class="case-leaf card-sheet" data-binding-side="${number%2?'right':'left'}"><span class="case-punch-holes" aria-hidden="true"><i></i><i></i><i></i></span><div class="case-page-content"><header class="document-heading"><span>${project.name.toUpperCase()} / CASE STUDY</span><span>${String(number).padStart(2,'0')} / ${title.toUpperCase()}</span></header>${body}<footer class="document-footnote">${caseStudy?'TEAM PIRACY++ / EGOVHACKATHON 2026':'CASE STUDY IN PREPARATION'}</footer></div></article>`;
+  const caseStudy=project.caseStudy;
+  const leaf=(number,title,body)=>`<article class="case-leaf card-sheet" data-binding-side="${number%2?'right':'left'}"><span class="case-punch-holes" aria-hidden="true"><i></i><i></i><i></i></span><div class="case-page-content"><header class="document-heading"><span>${project.name.toUpperCase()} / CASE STUDY</span><span>${String(number).padStart(2,'0')} / ${title.toUpperCase()}</span></header>${body}</div></article>`;
   if(caseStudy){
     const start=caseSpreadIndex(spread,caseSpreadCount(index))*2;
-    return caseStudy.slice(start,start+2).map((page,i)=>leaf(start+i+1,page.section,`<h2>${page.title}</h2>${start+i===0?`<a class="project-link case-open-project" href="${project.url}" target="_blank" rel="noopener noreferrer">Explore the prototype &#8599;</a>`:''}${page.body}`));
+    return caseStudy.slice(start,start+2).map((page,i)=>leaf(start+i+1,page.section,`<h2>${page.title}</h2>${start+i===0?`<a class="project-link case-open-project" href="${project.url}" target="_blank" rel="noopener noreferrer">${project.caseStudyLinkLabel||'Open project'} &#8599;</a>`:''}${page.body}`));
   }
   const placeholder=(label,copy)=>`<div class="case-placeholder"><span>${label}</span><p>${copy}</p><div class="case-writing-lines" aria-hidden="true"></div></div>`;
   if(caseSpreadIndex(spread)===0)return[

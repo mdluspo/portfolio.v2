@@ -12,7 +12,40 @@
 </head>
 <body>
 <section id="ignition" aria-label="Turn the key to start the drive">
-  <button id="start" aria-label="Turn the inserted ignition key to start exploring">
+  <button id="start" aria-label="Turn the inserted ignition key to start exploring" disabled>
+    <svg class="ignition-sketch" viewBox="0 0 360 330" aria-hidden="true">
+      <g class="ignition-sketch-bezel">
+        <path pathLength="1" style="--draw-delay:.04s;--draw-time:.48s" d="M181 46C222 45 252 77 255 119c4 44-23 82-64 89-42 7-78-20-83-63-5-39 14-77 49-94 8-4 16-5 24-5Z"/>
+        <path pathLength="1" style="--draw-delay:.11s;--draw-time:.44s" d="M181 50c38-1 66 28 70 68 4 41-20 76-58 84-38 8-72-17-79-56-7-37 10-73 43-90 8-4 16-6 24-6Z"/>
+        <path pathLength="1" style="--draw-delay:.17s;--draw-time:.42s" d="M181 59c32-1 57 24 61 58 4 35-17 67-50 73-32 7-61-15-67-49-5-32 10-63 38-77 6-3 12-5 18-5Z"/>
+        <path pathLength="1" style="--draw-delay:.23s;--draw-time:.4s" d="M181 68c27-1 48 20 52 49 4 30-14 56-42 63-28 6-53-12-58-41-5-28 8-54 32-67 6-3 11-4 16-4Z"/>
+        <path pathLength="1" style="--draw-delay:.29s;--draw-time:.36s" d="M180 76c23-1 41 17 44 42 3 25-12 48-35 53-24 5-45-10-49-35-4-24 7-46 27-57 4-2 9-3 13-3Z"/>
+        <path pathLength="1" style="--draw-delay:.34s;--draw-time:.3s" d="M123 111c8-20 23-37 43-45m-45 64c2 24 12 43 29 55m78-91c9 19 10 42 2 62m-88 22c13 10 31 15 48 13m44-27c-6 11-16 20-28 26"/>
+        <path pathLength="1" style="--draw-delay:.39s;--draw-time:.27s" d="M181 52c-22 5-40 18-51 37m105 1c-11-17-28-28-47-31m-68 83c5 28 25 50 51 57"/>
+      </g>
+      <g class="ignition-sketch-key">
+        <path pathLength="1" style="--draw-delay:.43s;--draw-time:.38s" d="M169 88c8-7 23-7 31 1l5 13-2 44-8 18-26-1-8-18 1-43Z"/>
+        <path pathLength="1" style="--draw-delay:.49s;--draw-time:.31s" d="M174 94c6-4 17-4 23 1l3 11-2 36-6 14-17-1-8-12 1-37Z"/>
+        <path pathLength="1" style="--draw-delay:.54s;--draw-time:.27s" d="M173 104c8-4 17-4 25 0m-29 39c10 4 20 4 30 0m-24-45 1 51m17-51-1 51"/>
+        <path pathLength="1" style="--draw-delay:.59s;--draw-time:.26s" d="M169 158c7-6 24-7 31-1 5 5 3 12-3 15-8 4-22 3-29-2-5-4-4-9 1-12Z"/>
+      </g>
+      <g class="ignition-sketch-ring" transform="translate(180 162) scale(.94) translate(-180 -162)">
+        <path pathLength="1" style="--draw-delay:.63s;--draw-time:.34s" d="M172 166c-12 11-16 29-8 43 8 15 28 21 42 11 13-9 16-29 7-42-9-13-29-17-41-8-11 8-14 25-5 36 8 10 24 12 33 4"/>
+        <path pathLength="1" style="--draw-delay:.68s;--draw-time:.3s" d="M176 165c-11 8-15 23-10 35 5 13 21 20 34 15 13-5 19-20 14-33-5-13-20-20-33-15"/>
+        <path pathLength="1" style="--draw-delay:.72s;--draw-time:.24s" d="M170 207c7 7 18 11 28 9m-29-15c11 5 26 5 37-1"/>
+      </g>
+      <g class="ignition-sketch-fobs" transform="translate(180 162) scale(.94) translate(-180 -162)">
+        <path pathLength="1" style="--draw-delay:.76s;--draw-time:.36s" d="M149 223l25 8-17 57-18-6 9-53Z"/>
+        <path pathLength="1" style="--draw-delay:.81s;--draw-time:.3s" d="M153 229l14 5-14 47-10-3 8-46Z"/>
+        <path pathLength="1" style="--draw-delay:.82s;--draw-time:.38s" d="M181 225l29-3 9 76-31 3-9-73Z"/>
+        <path pathLength="1" style="--draw-delay:.87s;--draw-time:.32s" d="M186 230l19-2 7 64-20 2-8-61Z"/>
+        <path pathLength="1" style="--draw-delay:.92s;--draw-time:.24s" d="M189 234l14-2 2 19-14 2Zm4 27 14-2 3 24-15 2Z"/>
+      </g>
+      <g class="ignition-sketch-highlights">
+        <path pathLength="1" style="--draw-delay:.96s;--draw-time:.22s" d="M116 105c8-25 29-45 54-51m-56 74c-1 27 9 49 28 64m99-84c4 24-2 48-18 66"/>
+        <path pathLength="1" style="--draw-delay:1s;--draw-time:.2s" transform="translate(180 162) scale(.94) translate(-180 -162)" d="M151 231l-9 43m43-46 6 22m-2-17 15-2"/>
+      </g>
+    </svg>
     <span class="ignition-lock" aria-hidden="true"><img src="/assets/ignition-lock-comic.png" alt="" draggable="false"></span>
     <span class="key-turn" aria-hidden="true">
       <span class="inserted-key-art"><img src="/assets/ignition-key-inserted.png" alt="" draggable="false"></span>

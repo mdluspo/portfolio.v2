@@ -43,26 +43,57 @@ test('each binder contains two paper areas, its matching project, and navigation
   for(let i=0;i<projects.length;i++){
     const binder=renderCaseStudy(i),project=projects[i];
     assert.equal((binder.match(/class="case-leaf card-sheet"/g)||[]).length,2);
-    assert.ok(binder.includes(project.name)&&binder.includes(project.description));
-    assert.ok(binder.includes(`src="${project.preview}"`));
+    assert.ok(binder.includes(project.name)&&binder.includes(project.caseStudy[0].title));
     assert.ok(binder.includes('data-case-back')&&binder.includes('data-case-close'));
-    assert.ok(binder.includes(i===0?'TEAM PIRACY++ / EGOVHACKATHON 2026':'CASE STUDY IN PREPARATION'));
+    assert.ok(!binder.includes('document-footnote'));
+    assert.ok(!binder.includes(project.caseStudyCredit));
+    assert.ok(!binder.includes('CASE STUDY IN PREPARATION'));
+  }
+});
+
+test('project evidence is present but placed differently in each journal',()=>{
+  const expectedPlacements=['journal-photo--evidence','journal-photo--catalog','journal-photo--action'];
+  for(let i=0;i<projects.length;i++){
+    const pages=Array.from({length:caseSpreadCount(i)},(_,spread)=>renderCasePages(i,spread)).flat();
+    const evidencePage=pages.findIndex(page=>page.includes(`src="${projects[i].preview}"`));
+    assert.notEqual(evidencePage,-1);
+    assert.ok(pages[evidencePage].includes(expectedPlacements[i]));
+  }
+  assert.deepEqual(projects.map((_,i)=>{
+    const pages=Array.from({length:caseSpreadCount(i)},(_,spread)=>renderCasePages(i,spread)).flat();
+    return pages.findIndex(page=>page.includes(`src="${projects[i].preview}"`));
+  }),[1,2,0]);
+});
+
+test('every journal varies hand-drawn doodles, sometimes pairing them without decorating every page',()=>{
+  const expected=['case-doodle--elife','case-doodle--scent','case-doodle--arrow'];
+  for(let i=0;i<projects.length;i++){
+    const pages=Array.from({length:caseSpreadCount(i)},(_,spread)=>renderCasePages(i,spread)).flat();
+    const illustrated=pages.filter(page=>page.includes('class="case-doodle '));
+    const doodleCount=(pages.join('').match(/class="case-doodle /g)||[]).length;
+    assert.ok(pages.join('').includes(expected[i]));
+    assert.ok(doodleCount>=6);
+    assert.ok(pages.some(page=>(page.match(/class="case-doodle /g)||[]).length>1));
+    assert.ok(illustrated.length<pages.length);
+    assert.ok(illustrated.every(page=>page.includes('pathLength="1"')));
   }
 });
 
 test('every case study has a direct project link on its first page',()=>{
   for(let i=0;i<projects.length;i++){
-    const first=renderCasePages(i,0)[0];
-    assert.ok(first.includes(`href="${projects[i].url}"`));
-    assert.ok(first.includes(i===0?'Explore the prototype':'Open project'));
+    const project=projects[i],first=renderCasePages(i,0)[0];
+    assert.ok(first.includes(`href="${project.url}"`));
+    assert.ok(first.includes(project.caseStudyLinkLabel));
     assert.ok(first.includes('target="_blank" rel="noopener noreferrer"'));
   }
 });
 
-test('the prototype invitation appears only on the first page',()=>{
-  const pages=Array.from({length:caseSpreadCount(0)},(_,spread)=>renderCasePages(0,spread)).flat();
-  assert.ok(pages[0].includes('Explore the prototype'));
-  assert.ok(pages.slice(1).every(page=>!page.includes('Explore the prototype')));
+test('the project invitation appears only on the first page',()=>{
+  for(let i=0;i<projects.length;i++){
+    const pages=Array.from({length:caseSpreadCount(i)},(_,spread)=>renderCasePages(i,spread)).flat();
+    assert.ok(pages[0].includes(projects[i].caseStudyLinkLabel));
+    assert.ok(pages.slice(1).every(page=>!page.includes(projects[i].caseStudyLinkLabel)));
+  }
 });
 
 test('eLife has a complete source-based case study without placeholder or invented impact claims',()=>{
@@ -75,7 +106,24 @@ test('eLife has a complete source-based case study without placeholder or invent
   assert.ok(pages.includes('top 30 teams out of 156'));
   assert.ok(pages.includes('class="case-showcase"'));
   assert.ok(renderCaseStudy(0).includes('01 / 08'));
-  assert.ok(renderCasePages(1,0).join('').includes('will go here'));
+});
+
+test('Joshua Scents has a complete, transparent prototype case study',()=>{
+  const pages=Array.from({length:caseSpreadCount(1)},(_,spread)=>renderCasePages(1,spread)).flat().join('');
+  assert.equal(caseSpreadCount(1),5);
+  assert.ok(!pages.includes('CASE STUDY IN PREPARATION'));
+  assert.ok(!pages.includes('will go here'));
+  for(const detail of ['Fresh, Timber &amp; Smoke','Discovery sets','pause','not independently verified'])assert.ok(pages.includes(detail));
+  assert.ok(renderCaseStudy(1).includes('01 / 05'));
+});
+
+test('ARROWKOPO documents the supplied mechanics and architecture',()=>{
+  const pages=Array.from({length:caseSpreadCount(2)},(_,spread)=>renderCasePages(2,spread)).flat().join('');
+  assert.equal(caseSpreadCount(2),4);
+  assert.ok(!pages.includes('CASE STUDY IN PREPARATION'));
+  assert.ok(!pages.includes('will go here'));
+  for(const detail of ['Micro Dash','EMP Freeze','Hyper Dash','Thorn Barrier','Tactical Nuke','game.js'])assert.ok(pages.includes(detail));
+  assert.ok(renderCaseStudy(2).includes('01 / 04'));
 });
 
 test('case study spreads have two pages, distinct content, and stop at the covers',()=>{

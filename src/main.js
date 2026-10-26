@@ -22,6 +22,17 @@ const radio = $('#radio'), usb = $('#usb');
 const carBody = $('.car'), suspension = $('.rumble'), wheel = $('.wheel');
 const rpmNeedle = $('#rpm-needle'), speedNeedle = $('#speed-needle');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const startButton=$('#start');
+const finishIgnitionReveal=()=>{
+  ignition.classList.add('ready');
+  startButton.disabled=false;
+};
+requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>{
+    ignition.classList.add('revealing');
+    setTimeout(finishIgnitionReveal,reduced.matches?1380:1480);
+  });
+});
 const cordLeft = $('#cord-left'), cordRight = $('#cord-right'), usbBody = $('.usb-drive');
 let usbPendulum = createPendulum(reduced.matches ? .008 : .04);
 const mouse = matchMedia('(hover: hover) and (pointer: fine)');
@@ -508,10 +519,12 @@ function renderProjectPaper(direction=0){
   }
 }
 function switchProject(direction){
-  if(crash||cardClosing||!inserted||usbAnimation||card.classList.contains('case-opening')||card.classList.contains('case-study-card')||card.classList.contains('contact-card'))return;
+  const browsingProjectPapers=card.open&&card.classList.contains('folder-card')&&!card.classList.contains('case-study-card')&&!card.classList.contains('contact-card');
+  if(crash||cardClosing||(!browsingProjectPapers&&(!inserted||usbAnimation))||card.classList.contains('case-opening')||card.classList.contains('case-study-card')||card.classList.contains('contact-card'))return;
   selectedProject=projectIndex(selectedProject+direction);
-  stopLook();projectPlaylist(direction);
-  if(card.open&&card.classList.contains('folder-card')){
+  stopLook();
+  if(inserted&&!usbAnimation)projectPlaylist(direction);
+  if(browsingProjectPapers){
     renderProjectPaper(direction);card.returnFocus=$('#project-play');
   }
 }
@@ -538,7 +551,10 @@ radio.addEventListener('wheel',event=>{
   if(!started||event.ctrlKey)return;
   event.preventDefault();event.stopPropagation();
   if(crash||card.open||!inserted||usbAnimation)return;
-  const amount=(event.deltaY||event.deltaX)*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
+  const vertical=Math.abs(event.deltaY)>=Math.abs(event.deltaX);
+  const delta=vertical?event.deltaY:event.deltaX;
+  if(!delta)return;
+  const amount=delta*(event.deltaMode===1?16:event.deltaMode===2?(vertical?innerHeight:innerWidth):1);
   const now=performance.now();
   if(now-radioScrollAt<260)return;
   if(Math.sign(amount)!==Math.sign(radioScrollTotal))radioScrollTotal=0;

@@ -331,6 +331,25 @@ a.paper{font:inherit;text-decoration:none;cursor:pointer}
 #start{position:absolute;left:50%;top:50%;width:360px;height:390px;min-height:0;padding:0;transform:translate(-50%,-130px);transform-origin:50% 130px;cursor:pointer;isolation:isolate}
 #start:focus-visible{outline:1px solid #b3b696;outline-offset:7px;border-radius:6px}
 #start:disabled{cursor:default}
+.ignition-sketch{position:absolute;left:0;top:0;width:360px;height:330px;overflow:visible;fill:none;stroke:#d8d4bd;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:0;filter:drop-shadow(0 0 2px #ddd7b833);pointer-events:none}
+.ignition-sketch path{stroke-dasharray:1;stroke-dashoffset:1;vector-effect:non-scaling-stroke}
+.ignition-sketch-key,.ignition-sketch-ring{stroke:#eee8cd;stroke-width:2.05}
+.ignition-sketch-fobs{stroke:#c8c5b1;stroke-width:1.65}
+.ignition-sketch-highlights{stroke:#888b78;stroke-width:1.1}
+#ignition.revealing .ignition-sketch{animation:ignition-sketch-layer 1.46s linear both}
+#ignition.revealing .ignition-sketch path{animation:ignition-pencil var(--draw-time,.4s) var(--draw-delay,0s) cubic-bezier(.3,.65,.4,1) both}
+#ignition .ignition-lock,#ignition .key-turn{opacity:0;filter:blur(4px) drop-shadow(2px 4px 2px #000a)}
+#ignition.revealing .ignition-lock{animation:ignition-real-in .34s .98s ease-out both}
+#ignition.revealing .key-turn{animation:ignition-real-in .34s 1.04s ease-out both}
+#ignition .ignition-prompt{opacity:0;transform:translateX(-50%) translateY(8px) scale(.96)}
+#ignition.revealing:not(.turning) .ignition-prompt{animation:ignition-copy-in .28s 1.12s cubic-bezier(.2,1.25,.45,1) both}
+#ignition.ready .ignition-sketch{opacity:0}
+#ignition.ready .ignition-lock,#ignition.ready .key-turn{opacity:1;filter:blur(0) drop-shadow(2px 4px 2px #000a)}
+#ignition.ready:not(.turning) .ignition-prompt{opacity:1;transform:translateX(-50%)}
+@keyframes ignition-pencil{0%{stroke-dashoffset:1;opacity:.25}45%{opacity:1}100%{stroke-dashoffset:0;opacity:.9}}
+@keyframes ignition-sketch-layer{0%,3%{opacity:0}7%,80%{opacity:.86}100%{opacity:0}}
+@keyframes ignition-real-in{0%{opacity:0;filter:blur(4px) drop-shadow(2px 4px 2px #000a)}100%{opacity:1;filter:blur(0) drop-shadow(2px 4px 2px #000a)}}
+@keyframes ignition-copy-in{0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.96)}75%{opacity:1;transform:translateX(-50%) translateY(-1px) scale(1.015)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
 .ignition-lock{position:absolute;left:111.3px;top:50.3px;width:142px;height:156px;overflow:hidden;clip-path:ellipse(49% 49% at 50% 50%);pointer-events:none}
 .ignition-lock img{position:absolute;left:-97.4057%;top:-58.5837%;width:295.7547%;height:269.0987%;max-width:none}
 .key-turn{position:absolute;left:156px;top:86px;width:48px;height:88px;transform-origin:24px 44px;filter:drop-shadow(2px 4px 2px #000a);pointer-events:none}
@@ -341,13 +360,13 @@ a.paper{font:inherit;text-decoration:none;cursor:pointer}
 .keyring-front{z-index:2}
 .keyring-front .keyring-swing{clip-path:inset(6px 26px calc(100% - 12px) 26px)}
 .keyring-swing img{position:absolute;left:-12.8866%;top:-2.4700%;width:129.6392%;height:110.3740%;max-width:none}
-.key-turn,.keyring-swing,.turning .key-turn,.turning .keyring-swing{animation:none!important}
+.keyring-swing,.turning .keyring-swing{animation:none!important}
 #skip{opacity:0;pointer-events:none}
 #skip:focus-visible{opacity:1;pointer-events:auto}
 #app{filter:blur(5px);transition:opacity .65s ease,filter .95s ease!important}
 .started #app{opacity:1;filter:blur(0)}
 @media(max-height:600px){#start{scale:.78}}
-@media(prefers-reduced-motion:reduce){#app{filter:none}.keyring-swing{animation:none}}
+@media(prefers-reduced-motion:reduce){#app{filter:none}.keyring-swing{animation:none}.ignition-sketch{display:block}#ignition.revealing .ignition-sketch{animation:ignition-sketch-layer 1.36s linear both!important}#ignition.revealing .ignition-sketch path{animation:ignition-pencil var(--draw-time,.4s) var(--draw-delay,0s) ease-out both!important}#ignition .ignition-lock,#ignition .key-turn{opacity:0;filter:none}#ignition.revealing .ignition-lock{animation:ignition-real-in .25s .94s ease-out both!important}#ignition.revealing .key-turn{animation:ignition-real-in .25s 1s ease-out both!important}#ignition.revealing:not(.turning) .ignition-prompt{animation:ignition-copy-in .22s 1.08s ease-out both!important}#ignition.ready .ignition-lock,#ignition.ready .key-turn{opacity:1;filter:none}}
 
 /* Steering-wheel Easter egg: one impact, a black transition, and a fresh ride. */
 .outside{transform:translate(calc(var(--outside-x,0px) + var(--swerve-x,0px)),var(--outside-y,0px)) rotate(var(--swerve-roll,0deg)) scale(1.09)}

@@ -6,6 +6,9 @@ import {parseHTML} from 'linkedom';
 
 test('case study navigation works for every project and recovers a stale transition',async()=>{
 const {window,document}=parseHTML(fs.readFileSync(new URL('../index.html',import.meta.url),'utf8'));
+  const startButton=document.querySelector('#start');
+  assert.equal(startButton.disabled,true,'Ignition waits for its sketch reveal');
+  assert.equal(document.querySelectorAll('.ignition-sketch path[pathLength="1"]').length,21,'Ignition has a detailed drawable pencil underlay');
 const errors=[];
 const proto=window.HTMLElement.prototype;
 proto.getBoundingClientRect=function(){return {left:0,top:0,right:400,bottom:500,width:400,height:500};};
@@ -75,6 +78,17 @@ for(let index=0;index<3;index++){
   assert.equal(document.querySelector('.dialog-workspace').hidden,false);
 }
 assert.equal(errors.length,0);
+vm.runInContext("inserted=false;selectedProject=0;showCard('projects','Projects','PROJECT FILES');",context);
+document.querySelector('#project-next').click();
+assert.equal(vm.runInContext('selectedProject',context),1,'Project paper arrows work without requiring the physical USB state');
+document.querySelector('#project-previous').click();
+assert.equal(vm.runInContext('selectedProject',context),0,'Project paper arrows browse in both directions');
+card.close();
+vm.runInContext('inserted=true;projectPlaylist();radioScrollAt=-Infinity;',context);
+const radioWheel=new window.Event('wheel',{bubbles:true,cancelable:true});
+Object.assign(radioWheel,{deltaY:2,deltaX:120,deltaMode:0,ctrlKey:false});
+document.querySelector('#radio').dispatchEvent(radioWheel);
+assert.equal(vm.runInContext('selectedProject',context),1,'Horizontal trackpad input browses the physical radio');
 vm.runInContext("selectedProject=0;showCard('projects','Projects','PROJECT FILES');",context);
 const scrollPaper=(deltaY,deltaX=0,ctrlKey=false)=>{
   vm.runInContext('paperScrollAt=-Infinity;',context);
