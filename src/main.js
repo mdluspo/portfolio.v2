@@ -780,7 +780,10 @@ function tick(time) {
     const ringAngle=keyringRotation(pose.degrees,ignitionRing.angle);
     ignitionRings.forEach(ring=>ring.style.transform=`rotate(${ringAngle}deg)`);
   }
-  if(started) {
+  // A static cabin is enough behind papers and the identity overlay. Keeping the
+  // road, loose pins, gauges, and parallax alive beneath translucency wastes a
+  // full scene render every frame and is especially expensive on mobile GPUs.
+  if(started&&!card.open&&!document.body.classList.contains('introducing')) {
     if(collision?.stopped)drive={...drive,speed:0,boost:0};
     else drive=advanceDrive(drive,delta);
     const motionRate=Math.min(1.55,1.18+Math.max(0,drive.speed-CRUISE_SPEED)*.1);

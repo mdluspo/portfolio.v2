@@ -506,3 +506,6 @@ dialog.folder-card.contact-card{width:min(480px,calc(100% - 48px))}
 .turning .ignition-prompt{opacity:0}
 body:not(.started) #quick-nav{display:none}
 
+/* Keep modal compositing cheap: the road scene is already dimmed behind paper. */
+dialog::backdrop{background:#16191888;backdrop-filter:none}
+

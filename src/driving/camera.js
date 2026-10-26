@@ -38,7 +38,7 @@ export function lookTarget(pointer, viewport, current, limits) {
 export const ease = (current, target, speed, delta) => current + (target - current) * (1 - Math.exp(-speed * delta));
 // A fixed duration keeps long pans just as quick as short ones, with no lingering tail.
 export function panStep(current, target, delta, previous = null) {
-  const duration = .28;
+  const duration = .2;
   if (current === target) return {position: target, from: target, to: target, elapsed: 0};
   const state = previous?.to === target ? previous : {from: current, to: target, elapsed: 0};
   const elapsed = Math.min(duration, state.elapsed + delta);
