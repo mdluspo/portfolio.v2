@@ -287,7 +287,7 @@ a.paper{font:inherit;text-decoration:none;cursor:pointer}
 .radio-socials{position:absolute;left:40.84%;top:85.48%;width:1.66%;height:9.06%;z-index:6;display:grid;grid-template-rows:repeat(3,1fr)}
 .radio-profile{position:relative;display:grid;place-items:center;width:calc(100% + 12px);margin-left:-6px;min-height:0;text-decoration:none;color:#1a2319;cursor:pointer;touch-action:manipulation}
 .radio-profile svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 0 #b4ad7f66);pointer-events:none}
-.radio-profile:hover svg,.radio-profile:focus-visible svg{color:#e0d6ac;filter:drop-shadow(0 1px 0 #142014)}
+.radio-profile:active svg,.radio-profile:focus-visible svg{color:#e0d6ac;filter:drop-shadow(0 1px 0 #142014)}
 .radio-profile:active svg{translate:0 1px}
 .radio-profile .object-tag{left:calc(100% + 9px);top:50%;bottom:auto;transform:translateY(-50%);font-size:17px!important}
 .radio-profile:hover::after,.radio-profile:focus-visible::after{content:none}
@@ -384,7 +384,7 @@ a.paper{font:inherit;text-decoration:none;cursor:pointer}
 /* Project tracks share the stereo's physical buttons and a stack of case papers. */
 .radio-project-controls{position:absolute;left:57.7%;top:85.48%;width:1.66%;height:9.06%;z-index:6;display:grid;grid-template-rows:repeat(3,1fr)}
 .radio-project-controls button{display:grid;place-items:center;width:calc(100% + 12px);margin-left:-6px;padding:0;min-height:0;color:#192218;font-family:'Cabin Display','Courier New',monospace;font-size:25px;line-height:1;text-shadow:0 1px #b4ad7f66;touch-action:manipulation}
-.radio-project-controls button:hover:not(:disabled),.radio-project-controls button:focus-visible{color:#e0d6ac;text-shadow:0 1px #142014}
+.radio-project-controls button:active:not(:disabled),.radio-project-controls button:focus-visible:not(:disabled){color:#e0d6ac;text-shadow:0 1px #142014}
 .radio-project-controls button:disabled{opacity:.35;cursor:default}
 .radio-project-controls button:active:not(:disabled){translate:0 1px}
 .radio-project-controls svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 0 #b4ad7f66);pointer-events:none}
