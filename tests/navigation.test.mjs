@@ -33,7 +33,7 @@ assert.equal(document.querySelector('#identity-intro').hidden,false,'Identity ap
 assert.equal(document.querySelector('#app').inert,true,'Camera interaction waits for the introduction');
 assert.equal(document.querySelector('#quick-nav').inert,true);
 assert.ok(document.querySelector('#identity-intro h1').textContent.includes('MARTIN LUSPO'));
-assert.ok(document.querySelector('#identity-intro .identity-role').textContent.includes('Frontend'));
+assert.equal(document.querySelector('#identity-intro .identity-role').textContent,'Full-Stack Software Developer');
 assert.equal(document.querySelector('#identity-intro .identity-tagline').textContent,'Thoughtfully designed. Built to work.');
 await settle();
 assert.equal(document.querySelector('#identity-intro').hidden,true,'Identity clears automatically after fading');
