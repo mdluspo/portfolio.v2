@@ -281,7 +281,7 @@ function fitCasePages(){
   if(!card.classList.contains('case-study-card')||caseTurning)return;
   const reading=portraitReader();
   const hint=$('[data-case-page-count] small');
-  if(hint)hint.textContent=reading?'SCROLL TO READ':'SCROLL TO TURN PAGES';
+  if(hint)hint.textContent=reading?'SWIPE TO TURN':'SCROLL TO TURN PAGES';
   document.querySelectorAll('.case-leaf:not(.case-turning-leaf):not(.case-under-leaf)').forEach(leaf=>{
     const content=leaf.querySelector('.case-page-content');
     if(!content)return;
@@ -345,7 +345,7 @@ async function turnCasePage(direction,duration=480){
     const pages=renderCasePages(selectedProject,next);
     workspace.querySelectorAll('.case-document-stack').forEach((stack,i)=>{stack.innerHTML=pages[i];});
     caseSpread=next;caseWheelTotal=0;
-    $('[data-case-page-count]').innerHTML=`${String(next+1).padStart(2,'0')} / ${String(count).padStart(2,'0')} <small>SCROLL TO READ</small>`;
+    $('[data-case-page-count]').innerHTML=`${String(next+1).padStart(2,'0')} / ${String(count).padStart(2,'0')} <small>SWIPE TO TURN</small>`;
     $('[data-case-page="-1"]').disabled=next===0;$('[data-case-page="1"]').disabled=next===count-1;
     workspace.scrollTop=0;
     fitCasePages();
@@ -403,10 +403,11 @@ async function turnCasePage(direction,duration=480){
   finally{if(revision===caseTurnRevision){cancelCaseTurn();fitCasePages();caseWheelCooldownUntil=0;}}
 }
 card.addEventListener('wheel',event=>{
-  if(!card.classList.contains('case-study-card')||event.ctrlKey||Math.abs(event.deltaY)<=Math.abs(event.deltaX))return;
-  if(portraitReader())return;
+  if(!card.classList.contains('case-study-card')||event.ctrlKey)return;
+  const horizontal=Math.abs(event.deltaX)>Math.abs(event.deltaY);
+  if(portraitReader()?!horizontal:horizontal)return;
   event.preventDefault();event.stopPropagation();
-  const amount=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
+  const amount=(horizontal?event.deltaX:event.deltaY)*(event.deltaMode===1?16:event.deltaMode===2?(horizontal?innerWidth:innerHeight):1);
   const now=performance.now(),elapsed=now-caseWheelAt;caseWheelAt=now;
   if($('.case-workspace').inert||now<caseWheelCooldownUntil)return;
   const duration=pageTurnDuration(amount,elapsed);
@@ -562,8 +563,8 @@ card.addEventListener('keydown',event=>{
 });
 card.addEventListener('wheel',event=>{
   if(!card.open||!card.classList.contains('folder-card')||card.classList.contains('case-study-card')||card.classList.contains('contact-card')||event.ctrlKey)return;
-  if(portraitReader())return;
   const vertical=Math.abs(event.deltaY)>=Math.abs(event.deltaX);
+  if(portraitReader()&&vertical)return;
   const delta=vertical?event.deltaY:event.deltaX;
   if(!delta)return;
   event.preventDefault();event.stopPropagation();
@@ -588,6 +589,55 @@ radio.addEventListener('wheel',event=>{
   radioScrollTotal+=amount;
   if(Math.abs(radioScrollTotal)>=45){switchProject(Math.sign(radioScrollTotal));radioScrollTotal=0;radioScrollAt=now;}
 },{passive:false});
+// Horizontal document gestures browse; vertical gestures remain native reading scrolls.
+function bindSwipe(element,onSwipe,{enabled,vertical=false}){
+  let gesture=null,suppressClickUntil=0;
+  element.addEventListener('pointerdown',event=>{
+    if(event.pointerType!=='touch'||event.isPrimary===false||gesture||!enabled())return;
+    suppressClickUntil=0;
+    if(event.target.closest('a,input,textarea,select,[contenteditable],button:not(#project-play)'))return;
+    gesture={id:event.pointerId,x:event.clientX,y:event.clientY,axis:null};
+  });
+  element.addEventListener('pointermove',event=>{
+    if(!gesture||event.pointerId!==gesture.id)return;
+    if(!enabled()){gesture=null;return;}
+    const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+    if(!gesture.axis){
+      if(Math.max(Math.abs(dx),Math.abs(dy))<12)return;
+      if(Math.abs(dx)>Math.abs(dy)*1.25)gesture.axis='x';
+      else if(Math.abs(dy)>Math.abs(dx)*1.25){
+        if(!vertical){gesture=null;return;}
+        gesture.axis='y';
+      }else return;
+    }
+    event.preventDefault();
+    if(!element.hasPointerCapture(event.pointerId))element.setPointerCapture(event.pointerId);
+  });
+  element.addEventListener('pointerup',event=>{
+    if(!gesture||event.pointerId!==gesture.id)return;
+    const completed=gesture;gesture=null;
+    if(!completed.axis)return;
+    suppressClickUntil=performance.now()+500;
+    const delta=completed.axis==='x'?event.clientX-completed.x:event.clientY-completed.y;
+    const threshold=Math.max(28,Math.min(52,element.clientWidth*.14));
+    if(Math.abs(delta)>=threshold&&enabled())onSwipe(-Math.sign(delta));
+  });
+  const cancel=()=>{gesture=null;};
+  element.addEventListener('pointercancel',cancel);
+  element.addEventListener('lostpointercapture',event=>{if(event.target===element)cancel();});
+  element.addEventListener('click',event=>{
+    if(event.detail!==0&&performance.now()<suppressClickUntil){event.preventDefault();event.stopImmediatePropagation();}
+  },true);
+}
+bindSwipe(radio,direction=>switchProject(direction),{
+  vertical:true,enabled:()=>started&&inserted&&!crash&&!card.open&&!usbAnimation
+});
+bindSwipe($('.dialog-workspace'),direction=>switchProject(direction),{
+  enabled:()=>card.open&&!cardClosing&&!crash&&!$('.project-tablet').hidden&&!card.classList.contains('case-opening')&&!card.classList.contains('case-study-card')
+});
+bindSwipe($('.case-workspace'),direction=>turnCasePage(direction),{
+  enabled:()=>card.open&&!cardClosing&&!crash&&card.classList.contains('case-study-card')&&!$('.case-workspace').inert&&!caseTurning
+});
 usb.addEventListener('click',()=>{
   if(crash)return;
   mark('projects');stopLook();
@@ -686,7 +736,9 @@ app.addEventListener('pointerdown',event=>{
   stopLook();
   const rect=wheel.getBoundingClientRect();
   const steering=event.pointerType==='touch'&&wheelContains({x:event.clientX,y:event.clientY},rect);
-  dragging={id:event.pointerId,x:event.clientX,y:event.clientY,camera:{...camera},lastX:event.clientX,lastY:event.clientY,time:performance.now(),steering,rect};
+  const touch=event.pointerType==='touch';
+  const gain=touch?{x:Math.max(1.8,Math.min(2.8,size.width/innerWidth*.55)),y:1.8}:{x:1,y:1};
+  dragging={id:event.pointerId,x:event.clientX,y:event.clientY,camera:{...camera},lastX:event.clientX,lastY:event.clientY,time:performance.now(),steering,rect,touch,gain};
   stage.classList.add('dragging');app.setPointerCapture(event.pointerId);
 });
 app.addEventListener('pointermove',event=>{
@@ -703,15 +755,18 @@ app.addEventListener('pointermove',event=>{
     }
     return;
   }
-  target=constrain({x:dragging.camera.x+dx,y:dragging.camera.y+dy},limits());
+  target=constrain({x:dragging.camera.x+dx*dragging.gain.x,y:dragging.camera.y+dy*dragging.gain.y},limits());
   const now=performance.now(),dt=Math.max(.008,(now-dragging.time)/1000);
-  velocity={x:(event.clientX-dragging.lastX)/dt,y:(event.clientY-dragging.lastY)/dt};
+  const deltaX=event.clientX-dragging.lastX,deltaY=event.clientY-dragging.lastY;
+  velocity={x:deltaX/dt*dragging.gain.x,y:deltaY/dt*dragging.gain.y};
+  if(dragging.touch&&moved)drive=accelerate(drive,(deltaY||deltaX)*.8);
   dragging.lastX=event.clientX;dragging.lastY=event.clientY;dragging.time=now;
 });
 function releaseDrag(event) {
   if(!dragging||event.pointerId!==dragging.id) return;
   if(dragging.steering||performance.now()-dragging.time>100||event.type==='pointercancel') velocity={x:0,y:0};
-  velocity.x=Math.max(-600,Math.min(600,velocity.x));velocity.y=Math.max(-90,Math.min(90,velocity.y));
+  const maxX=dragging.touch?1200:600,maxY=dragging.touch?240:90;
+  velocity.x=Math.max(-maxX,Math.min(maxX,velocity.x));velocity.y=Math.max(-maxY,Math.min(maxY,velocity.y));
   if(app.hasPointerCapture(event.pointerId)) app.releasePointerCapture(event.pointerId);
   dragging=null;stage.classList.remove('dragging');
 }
@@ -890,8 +945,9 @@ function tick(time) {
     target=constrain(target,limits());
     if(dragging){
       cameraPan={x:null,y:null};
-      camera.x=dragging&&!reduced.matches?ease(camera.x,target.x,17,delta):target.x;
-      camera.y=dragging&&!reduced.matches?ease(camera.y,target.y,17,delta):target.y;
+      const response=dragging.touch?28:17;
+      camera.x=!reduced.matches?ease(camera.x,target.x,response,delta):target.x;
+      camera.y=!reduced.matches?ease(camera.y,target.y,response,delta):target.y;
     }else{
       cameraPan.x=panStep(camera.x,target.x,delta,cameraPan.x);
       cameraPan.y=panStep(camera.y,target.y,delta,cameraPan.y);

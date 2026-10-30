@@ -512,3 +512,7 @@ dialog::backdrop{background:#16191888;backdrop-filter:none}
 /* Scene artwork has deliberate dimensions, including SVGs wider than their mount. */
 html{-webkit-text-size-adjust:100%}
 .usb-cord{max-width:none;width:126px;height:105px}
+
+/* Reading scrolls stay native while horizontal gestures browse documents. */
+.dialog-workspace,.case-workspace{touch-action:pan-y pinch-zoom}
+.radio-display,.radio-display button{touch-action:none}
