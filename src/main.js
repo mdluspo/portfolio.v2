@@ -37,7 +37,6 @@ const cordLeft = $('#cord-left'), cordRight = $('#cord-right'), usbBody = $('.us
 let usbPendulum = createPendulum(reduced.matches ? .008 : .04);
 const mouse = matchMedia('(hover: hover) and (pointer: fine)');
 const order = ['about', 'projects', 'glove', 'profiles'];
-const names = {about:'ABOUT', projects:'PROJECTS', glove:'GLOVEBOX', profiles:'PROFILES'};
 const objects = {about:$('.visor'), projects:usb, glove:$('#glove'), profiles:$('.radio-socials')};
 const interactionLabels={about:'About me',projects:'Projects',glove:'Glovebox',profiles:'Profile links'};
 for(const [key,node] of Object.entries(objects)){
@@ -61,7 +60,7 @@ let started = false, starting = false, dragging = null, moved = false;
 let size = layout(innerWidth, innerHeight), camera = {x:0,y:0}, target = {x:0,y:0};
 let cameraPan={x:null,y:null};
 let velocity = {x:0,y:0}, pointer = null, keyboardInput = false;
-let priorTime = performance.now(), frame = 0, cueTime = 0;
+let priorTime = performance.now(), frame = 0;
 let drivingTime = 0;
 let drive = createDrive();
 const roadMarks = [], roadsideObjects = [];
@@ -82,14 +81,18 @@ const crashTree=$('#crash-tree'),crashVeil=$('#crash-veil');
 const crashObjects=[{node:$('.visor'),tilt:31},{node:$('.mirror'),tilt:-28},{node:radio,tilt:7},{node:$('.radio-socials'),tilt:5},{node:$('.papers'),tilt:-28}];
 
 function limits() {return bounds(innerWidth, innerHeight, size.width, size.height);}
+function portraitReader() {return innerWidth<=900&&innerHeight>innerWidth;}
 function stopLook() {pointer = null; velocity = {x:0,y:0}; target = {...camera};}
 function fit(initial = false) {
   size = layout(innerWidth, innerHeight);
   const limit = limits();
   stage.style.setProperty('--w', `${size.width}px`);
   stage.style.setProperty('--h', `${size.height}px`);
-  stage.style.setProperty('--visor-top', `${(size.height-innerHeight)/2-limit.home-10}px`);
+  stage.style.setProperty('--visor-top', `${(size.height-innerHeight)/2-limit.home+(portraitReader()?14:-10)}px`);
   stage.style.setProperty('--roof-bottom', `${headlinerBottom(size.height,innerHeight,limit.home)}px`);
+  stage.style.setProperty('--usb-hang-scale', String(portraitReader()?Math.max(1.05,Math.min(1.2,innerWidth/340)):1));
+  const dockScale=portraitReader()?.8:.7;
+  stage.style.setProperty('--usb-dock-scale',String(dockScale));
   if (initial) {
     target = constrain({x:innerWidth <= 600 ? 0 : size.width*.035,y:limit.home},limit);
     camera = {...target};
@@ -98,7 +101,7 @@ function fit(initial = false) {
   const mount = $('.usb-mount');
   const port = $('.radio-usb-port');
   stage.style.setProperty('--dock-x', `${port.offsetLeft+port.offsetWidth/2-mount.offsetLeft-21}px`);
-  stage.style.setProperty('--dock-y', `${port.offsetTop+port.offsetHeight/2-mount.offsetTop+102.1}px`);
+  stage.style.setProperty('--dock-y', `${port.offsetTop+port.offsetHeight/2-mount.offsetTop+12+128.72*dockScale}px`);
 }
 fit(true); addEventListener('resize',()=>fit());
 
@@ -198,6 +201,8 @@ function showCard(key,title,category,focusTarget) {
   if(key==='about')setupInspectID();
   card.returnFocus=focusTarget||document.activeElement;
   if (!card.open) card.showModal();
+  $('.dialog-workspace').scrollTop=0;
+  $('.dialog-stack .card-sheet').scrollTop=0;
   if(key==='projects'||key==='about'||key==='contact')cardTransition=$('.dialog-workspace').animate([
     {opacity:0,transform:'translateY(38px)'},
     {opacity:1,transform:'translateY(0)'}
@@ -274,9 +279,17 @@ function cancelCaseTurn(){
 }
 function fitCasePages(){
   if(!card.classList.contains('case-study-card')||caseTurning)return;
+  const reading=portraitReader();
+  const hint=$('[data-case-page-count] small');
+  if(hint)hint.textContent=reading?'SCROLL TO READ':'SCROLL TO TURN PAGES';
   document.querySelectorAll('.case-leaf:not(.case-turning-leaf):not(.case-under-leaf)').forEach(leaf=>{
     const content=leaf.querySelector('.case-page-content');
     if(!content)return;
+    if(reading){
+      for(const property of ['zoom','width','height','min-height'])content.style.removeProperty(property);
+      content.querySelectorAll('.case-team-photo,.case-showcase').forEach(figure=>figure.style.removeProperty('width'));
+      return;
+    }
     const leafRect=leaf.getBoundingClientRect();
     document.querySelectorAll('.case-folder>.case-binding-front i').forEach((ring,index)=>{
       const ringRect=ring.getBoundingClientRect();
@@ -328,6 +341,16 @@ async function turnCasePage(direction,duration=480){
   const count=caseSpreadCount(selectedProject);
   const next=caseSpreadIndex(caseSpread+direction,count);
   if(next===caseSpread)return;
+  if(portraitReader()){
+    const pages=renderCasePages(selectedProject,next);
+    workspace.querySelectorAll('.case-document-stack').forEach((stack,i)=>{stack.innerHTML=pages[i];});
+    caseSpread=next;caseWheelTotal=0;
+    $('[data-case-page-count]').innerHTML=`${String(next+1).padStart(2,'0')} / ${String(count).padStart(2,'0')} <small>SCROLL TO READ</small>`;
+    $('[data-case-page="-1"]').disabled=next===0;$('[data-case-page="1"]').disabled=next===count-1;
+    workspace.scrollTop=0;
+    fitCasePages();
+    return;
+  }
   caseTurning=true;caseWheelTotal=0;
   const revision=++caseTurnRevision;
   const stacks=[...workspace.querySelectorAll('.case-document-stack')];
@@ -381,6 +404,7 @@ async function turnCasePage(direction,duration=480){
 }
 card.addEventListener('wheel',event=>{
   if(!card.classList.contains('case-study-card')||event.ctrlKey||Math.abs(event.deltaY)<=Math.abs(event.deltaX))return;
+  if(portraitReader())return;
   event.preventDefault();event.stopPropagation();
   const amount=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
   const now=performance.now(),elapsed=now-caseWheelAt;caseWheelAt=now;
@@ -396,6 +420,7 @@ card.addEventListener('wheel',event=>{
 },{passive:false});
 card.addEventListener('keydown',event=>{
   if(!card.classList.contains('case-study-card')||!['ArrowDown','ArrowUp','ArrowRight','ArrowLeft','PageDown','PageUp'].includes(event.key))return;
+  if(portraitReader()&&!['ArrowRight','ArrowLeft'].includes(event.key))return;
   event.preventDefault();turnCasePage(['ArrowDown','ArrowRight','PageDown'].includes(event.key)?1:-1);
 });
 card.addEventListener('cancel',event=>{event.preventDefault();closeCard();});
@@ -478,6 +503,7 @@ function clearPaperTransition(){
 function renderProjectPaper(direction=0){
   clearPaperTransition();
   const sheet=$('.card-sheet');
+  sheet.scrollTop=0;
   const departing=direction?sheet.cloneNode(true):null;
   const paper=$('#project-document');
   paper.innerHTML=renderProject(selectedProject);
@@ -536,6 +562,7 @@ card.addEventListener('keydown',event=>{
 });
 card.addEventListener('wheel',event=>{
   if(!card.open||!card.classList.contains('folder-card')||card.classList.contains('case-study-card')||card.classList.contains('contact-card')||event.ctrlKey)return;
+  if(portraitReader())return;
   const vertical=Math.abs(event.deltaY)>=Math.abs(event.deltaX);
   const delta=vertical?event.deltaY:event.deltaX;
   if(!delta)return;
@@ -581,8 +608,8 @@ usb.addEventListener('click',()=>{
   const destination=inserted?{
     x:parseFloat(stage.style.getPropertyValue('--dock-x')),
     y:parseFloat(stage.style.getPropertyValue('--dock-y')),
-    angle:180,scale:.7
-  }:{x:0,y:0,angle:0,scale:1};
+    angle:180,scale:parseFloat(stage.style.getPropertyValue('--usb-dock-scale'))
+  }:{x:0,y:0,angle:0,scale:parseFloat(stage.style.getPropertyValue('--usb-hang-scale'))};
   const finish=()=>{
     if(revision!==usbRevision) return;
     usb.classList.toggle('docked',inserted);
@@ -654,16 +681,28 @@ wheel.addEventListener('keydown',event=>{
 addEventListener('pointerdown',()=>{keyboardInput=false;},true);
 app.addEventListener('pointerdown',event=>{
   moved=false;
-  if(!started||crash||card.open||event.button!==0||event.target.closest('button, a, .glove-assembly, .radio-display')) return;
+  if(!started||crash||card.open||dragging||event.isPrimary===false||event.button!==0||event.target.closest('button, a, .glove-assembly, .radio-display')) return;
   usbFlightFocus=false;
   stopLook();
-  dragging={id:event.pointerId,x:event.clientX,y:event.clientY,camera:{...camera},lastX:event.clientX,lastY:event.clientY,time:performance.now()};
+  const rect=wheel.getBoundingClientRect();
+  const steering=event.pointerType==='touch'&&wheelContains({x:event.clientX,y:event.clientY},rect);
+  dragging={id:event.pointerId,x:event.clientX,y:event.clientY,camera:{...camera},lastX:event.clientX,lastY:event.clientY,time:performance.now(),steering,rect};
   stage.classList.add('dragging');app.setPointerCapture(event.pointerId);
 });
 app.addEventListener('pointermove',event=>{
   if(!dragging||event.pointerId!==dragging.id) return;
   const dx=event.clientX-dragging.x,dy=event.clientY-dragging.y;
   if(Math.hypot(dx,dy)>7) moved=true;
+  if(dragging.steering){
+    const gesture=dragging;
+    const deltaX=event.clientX-gesture.lastX,deltaY=event.clientY-gesture.lastY;
+    gesture.lastX=event.clientX;gesture.lastY=event.clientY;gesture.time=performance.now();
+    if(moved&&crashCooldown<=0){
+      event.preventDefault();
+      steerWheel(wheelScrollTurn({x:event.clientX,y:event.clientY},gesture.rect,deltaX,deltaY));
+    }
+    return;
+  }
   target=constrain({x:dragging.camera.x+dx,y:dragging.camera.y+dy},limits());
   const now=performance.now(),dt=Math.max(.008,(now-dragging.time)/1000);
   velocity={x:(event.clientX-dragging.lastX)/dt,y:(event.clientY-dragging.lastY)/dt};
@@ -671,7 +710,7 @@ app.addEventListener('pointermove',event=>{
 });
 function releaseDrag(event) {
   if(!dragging||event.pointerId!==dragging.id) return;
-  if(performance.now()-dragging.time>100||event.type==='pointercancel') velocity={x:0,y:0};
+  if(dragging.steering||performance.now()-dragging.time>100||event.type==='pointercancel') velocity={x:0,y:0};
   velocity.x=Math.max(-600,Math.min(600,velocity.x));velocity.y=Math.max(-90,Math.min(90,velocity.y));
   if(app.hasPointerCapture(event.pointerId)) app.releasePointerCapture(event.pointerId);
   dragging=null;stage.classList.remove('dragging');
@@ -689,16 +728,6 @@ app.addEventListener('focusin',event=>{
   if(box.bottom>innerHeight-20) target=constrain({x:target.x,y:camera.y+innerHeight-20-box.bottom},limits());
   app.scrollLeft=0;app.scrollTop=0;
 });
-function updateCue() {
-  const key=order.find(item=>!seen.has(item)),cue=$('#edge-cue');
-  if(!key||crash||menuOpen||!started||card.open){cue.style.display='none';return;}
-  const box=objects[key].getBoundingClientRect();let direction='',x=0,y=0;
-  if(box.right<25){direction='←';x=14;y=innerHeight*.45;}
-  else if(box.left>innerWidth-25){direction='→';x=innerWidth-140;y=innerHeight*.45;}
-  if(!direction){cue.style.display='none';return;}
-  cue.textContent=`${names[key]} ${direction}`;
-  cue.style.cssText=`display:block;left:${Math.max(12,x)}px;top:${Math.max(12,y)}px`;
-}
 function steerWheel(turn){
   const now=performance.now();
   if(wheelGestureStart===null||wheelIdle>.45){wheelGestureStart=now;wheelScrollTravel=0;}
@@ -844,7 +873,7 @@ function tick(time) {
       if(collision?.struck){acceleration.x+=crash.direction*8500*Math.exp(-collision.impactTime*15)*impactScale;}
       usbPendulum=stepPendulum(usbPendulum,delta,acceleration);
       // Positive physical displacement is to the right; a hanging CSS element rotates the opposite way.
-      usb.style.transform=`rotate(${-usbPendulum.angle*180/Math.PI}deg)`;
+      usb.style.transform=`rotate(${-usbPendulum.angle*180/Math.PI}deg) scale(var(--usb-hang-scale,1))`;
       const flex=Math.max(-3,Math.min(3,usbPendulum.velocity*7));
       cordLeft.setAttribute('d',`M-16 -28 C${-10+flex} 2 ${7+flex*.5} 40 16 61`);
       cordRight.setAttribute('d',`M58 -28 C${52+flex} 2 ${32+flex*.5} 40 23 61`);
@@ -872,7 +901,6 @@ function tick(time) {
     stage.style.setProperty('--pan-x',`${camera.x.toFixed(3)}px`);stage.style.setProperty('--pan-y',`${camera.y.toFixed(3)}px`);
     stage.style.setProperty('--outside-x',`${(-camera.x*.72).toFixed(3)}px`);stage.style.setProperty('--outside-y',`${(-camera.y*.72).toFixed(3)}px`);
   }
-  if(time-cueTime>140){updateCue();cueTime=time;}
   frame=requestAnimationFrame(tick);
 }
 frame=requestAnimationFrame(tick);
@@ -927,7 +955,7 @@ function renderRoad(distance){
   }
 }
 renderRoad(0);
-const hint=$('#driving-hint');hint.textContent=mouse.matches?'Click a ring to explore · Scroll the wheel to steer':'Tap a ring to explore · Drag to look around';
+const hint=$('#driving-hint');hint.textContent=mouse.matches?'Click a ring to explore · Scroll the wheel to steer':'Swipe the wheel to steer · Drag elsewhere to look around';
 function showIdentityIntro(){
   const intro=$('#identity-intro');
   stopLook();app.inert=true;quickNav.inert=true;

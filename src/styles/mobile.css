@@ -1,0 +1,217 @@
+/* Portrait is a reading viewport, not a scaled-down desktop workspace. */
+@media (max-width: 900px) and (orientation: portrait) {
+  .visor {
+    --visor-width: clamp(240px, 66vw, 360px);
+    left: calc(24% - var(--visor-width) / 2);
+    width: var(--visor-width);
+    height: calc(var(--visor-width) * .64);
+  }
+
+  .license-text strong { font-size: clamp(29px, 8vw, 40px); }
+  .license-text small { font-size: 11px; }
+  .license-text > span { font-size: 12px; }
+  .visor > .interaction-cue { width: 24px; height: 24px; }
+  .usb-cord { filter: drop-shadow(.6px .6px 0 #b9aa7d99); }
+  .usb > .interaction-cue { width: 20px; height: 20px; }
+
+  .paper { padding: 14px 16px; }
+  .resume-paper > b, .connect-paper > b { font-size: 28px; line-height: 1.1; }
+  .resume-paper > small, .connect-paper > small { font-size: 20px; line-height: 1.3; }
+  .resume-paper > i {
+    display: block;
+    width: 80%;
+    height: 2px;
+    margin-top: 6px;
+    background: #636c50;
+    opacity: .55;
+  }
+  .glove-note { font-size: 12px; }
+
+  /* The top-layer dialog stays independent of the panning cabin. */
+  dialog#card, dialog#card.folder-card, dialog#card.folder-card.contact-card,
+  dialog#card.folder-card.case-study-card {
+    left: 50%;
+    right: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 24px);
+    max-width: 640px;
+    height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: 980px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+  #card::backdrop { background: #080e0bd9; }
+  #card .dialog-workspace {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    height: 100%;
+    max-height: none;
+    padding: 0 4px 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
+    scrollbar-width: thin;
+    scrollbar-color: #969b80 transparent;
+  }
+  #card .dialog-stack { display: block; flex: 1 0 auto; margin: 0 6px; min-width: 0; }
+  #card .sheet-two { transform: translate(2px, 6px) rotate(.25deg); }
+  #card .sheet-one { transform: translate(-2px, 3px) rotate(-.25deg); }
+  #card .card-sheet {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    max-height: none;
+    padding: 58px 24px 24px;
+    overflow: visible;
+  }
+  #card #card-body { flex: 1; }
+  #card .project-tablet { order: 1; flex: none; margin: 0 10px; }
+  #card .project-tablet figcaption { font-size: 18px; }
+  #card .card-category { max-width: calc(100% - 36px); font-size: 13px; }
+  #card #close { position: fixed; top: 10px; right: 10px; width: 44px; height: 44px; font-size: 30px; z-index: 5; background: #ece7d4; border-radius: 2px; }
+  #card .project-document { min-height: 0; padding-top: 24px; }
+  #card .project-document h2 { font-size: clamp(32px, 9vw, 42px); margin: 24px 0 16px; }
+  #card p:not(.connect-email), #card .document-lead { font-size: 16px; line-height: 1.65; text-align: left; }
+  #card .document-heading { font-size: 12px; line-height: 1.5; gap: 12px; }
+  #card .document-heading span { overflow-wrap: anywhere; }
+  #card .document-footnote { font-size: 13px; line-height: 1.5; margin-top: 32px; }
+  #card .connect-email { font-size: 19px; overflow-wrap: anywhere; }
+  #card .project-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 22px; }
+  #card .project-pagination { margin-top: 32px; font-size: 22px; }
+  #card .project-pagination button { width: 52px; min-height: 48px; }
+
+  /* Keep the whole preview in view; only the paper's text needs to scroll. */
+  #card.folder-card:not(.contact-card):not(.case-study-card) .dialog-workspace {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 4px 8px 12px;
+    overflow: hidden;
+  }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-tablet {
+    order: 0;
+    grid-row: 1;
+    justify-self: center;
+    width: min(100%, 39dvh);
+    margin: 0;
+  }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-tablet figcaption { display: none; }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .dialog-stack {
+    grid-row: 2;
+    height: 100%;
+    min-height: 0;
+  }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .card-sheet {
+    height: 100%;
+    min-height: 0;
+    padding: 44px 20px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
+    scrollbar-width: thin;
+  }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-document { padding-top: 8px; }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-document h2 { margin: 14px 0 12px; }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .document-lead { margin: 12px 0 16px; }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-link { margin: 0 0 12px; }
+  #card.folder-card:not(.contact-card):not(.case-study-card) .project-pagination { margin-top: 16px; padding-top: 12px; }
+
+  /* Keep the ID's physical proportions, but allow its back to scroll if needed. */
+  dialog#card.id-card-dialog { height: auto; max-height: calc(100dvh - 160px); width: calc(100% - 32px); }
+  #card.id-card-dialog .dialog-workspace { display: block; height: auto; padding: 0; overflow: visible; }
+  #card.id-card-dialog .dialog-stack, #card.id-card-dialog .card-sheet { display: contents; }
+  #card.id-card-dialog #close { top: -52px; right: 0; color: #e9e4ce; background: #182019; }
+  #card.id-card-dialog .id-turntable { aspect-ratio: 1.15; }
+  #card.id-card-dialog .id-face { padding: 20px; overflow: auto; }
+  #card.id-card-dialog .id-front-layout { gap: 16px; margin: 20px 0; }
+  #card.id-card-dialog .id-identity p { font-size: 15px; line-height: 1.35; }
+  #card.id-card-dialog .id-back p { font-size: 15px; line-height: 1.5; margin: 10px 0; }
+  #card.id-card-dialog .id-back a { font-size: 14px; overflow-wrap: anywhere; }
+  #card.id-card-dialog .id-inspect-controls { margin-top: 16px; font-size: 15px; }
+
+  /* A full-width paper column replaces the miniature two-page desktop spread. */
+  #card .case-workspace {
+    height: 100%;
+    max-height: none;
+    padding: 0 4px 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
+    scrollbar-width: thin;
+  }
+  #card .case-toolbar {
+    position: sticky;
+    top: 0;
+    left: auto;
+    right: auto;
+    padding: 6px 8px;
+    margin-bottom: 24px;
+    gap: 8px;
+    background: #20291ef5;
+    border-radius: 3px;
+    z-index: 40;
+  }
+  #card .case-toolbar > span { display: none; }
+  #card .case-toolbar button { min-height: 44px; font-size: 20px; }
+  #card .case-toolbar [data-case-close] { min-width: 44px; font-size: 30px; }
+  #card .case-folder {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 0;
+    padding: 16px 12px;
+    gap: 24px;
+    background: linear-gradient(90deg, #30392a, #596047 12%, #454d36);
+  }
+  #card .case-folder-tab { right: 10px; font-size: 13px; max-width: 90%; }
+  #card .case-document-stack { height: auto; min-height: 0; }
+  #card .case-leaf.card-sheet {
+    display: block;
+    height: auto;
+    min-height: calc(100dvh - 220px);
+    max-height: none;
+    padding: 24px 20px;
+    overflow: visible;
+  }
+  #card .case-page-content { width: 100%; height: auto; min-height: 0; }
+  #card .case-leaf h2 { font-size: 30px; line-height: 1.15; margin: 18px 0; }
+  #card .case-leaf p, #card .case-leaf .case-caption,
+  #card .case-leaf .case-steps, #card .case-leaf .case-note,
+  #card .case-team-roster ul { font-size: 16px; line-height: 1.65; }
+  #card .case-leaf .document-heading { font-size: 12px; }
+  #card .case-leaf .case-section h3 { font-size: 23px; }
+  #card .case-leaf .document-footnote { margin-top: 26px; }
+  #card .case-binding, #card .case-punch-holes { display: none; }
+  #card .case-team-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  #card .case-team-layout .case-team-photo { width: min(100%, 280px); justify-self: center; }
+  #card .case-team-roster { transform: none; }
+  #card .case-team-roster h3 { font-size: 24px; }
+  #card .case-page-controls {
+    position: sticky;
+    bottom: 0;
+    padding: 8px 6px;
+    margin-top: 20px;
+    gap: 6px;
+    background: #20291ef5;
+    border-radius: 3px;
+    z-index: 40;
+    font-size: 19px;
+  }
+  #card .case-page-controls button { min-height: 44px; }
+  #card .case-page-controls small { font-size: 12px; letter-spacing: 0; }
+  #card .case-page-controls > span { min-width: 70px; }
+
+  #quick-nav { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); }
+  .driving-hint { font-size: 12px; }
+}

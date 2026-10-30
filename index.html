@@ -9,6 +9,7 @@
 <link rel="preload" as="image" href="/assets/ignition-key-inserted.png"><link rel="preload" as="image" href="/assets/ignition-lock-comic.png"><link rel="preload" as="image" href="/assets/ignition-keyring-comic.png"><link rel="preload" as="font" type="font/ttf" href="/assets/fonts/VT323-Regular.ttf" crossorigin><link rel="preload" as="image" href="/assets/car-cabin-extended-v2.png">
 <link rel="stylesheet" href="/src/styles/objects.css">
 <link rel="stylesheet" href="/src/styles/case-studies.css">
+<link rel="stylesheet" href="/src/styles/mobile.css">
 </head>
 <body>
 <section id="ignition" aria-label="Turn the key to start the drive">
@@ -77,7 +78,7 @@
         <g transform="translate(373 778)"><g id="speed-needle"><path d="M0 0L-25-29" stroke="#dbe0c9" stroke-width="3.5" stroke-linecap="round"/></g><circle r="5" fill="#87927f" stroke="#121a14" stroke-width="2"/></g>
       </svg>
       <div class="mirror" role="img" aria-label="Rearview mirror reflecting the moving road behind"><img class="mirror-frame" src="/assets/mirror-comic.png" alt="" draggable="false"><svg class="mirror-scene" viewBox="0 0 500 340" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="rear-glass"><path d="M28 181Q250 157 472 181L460 280Q250 305 38 280Z"/></clipPath><linearGradient id="rear-sunset" x2="0" y2="1"><stop stop-color="#6c321e"/><stop offset="1" stop-color="#ae6e35"/></linearGradient></defs><g clip-path="url(#rear-glass)"><path fill="url(#rear-sunset)" d="M0 150h500v160H0z"/><path d="M0 211L74 180L136 205L174 211L220 221L270 222L340 206L403 181L500 208V330H0Z" fill="#1c2718"/><path d="M248 221h7l120 100H124Z" fill="#30332a"/><path d="M248 221L124 321M255 221L375 321" fill="none" stroke="#a69661" stroke-width="1.8"/><path d="M250 224L191 321h32l29-97Z" fill="#72745b" opacity=".16"/><g id="rear-markings" fill="#c2ab71"></g><g id="rear-posts" fill="#858c68" stroke="#172016" stroke-width=".4"></g><path d="M0 230L70 209L129 218M350 215L413 204L500 226" stroke="#4e5c35" fill="none"/><path d="M308 158L235 309h28l84-155Z" fill="#b9c3a0" opacity=".08"/></g></svg></div>
-      <img role="button" tabindex="0" aria-label="Steering wheel. Scroll over the rim to steer, or use the left and right arrow keys." class="wheel" src="/assets/car-wheel-comic.png" alt="" draggable="false">
+      <img role="button" tabindex="0" aria-label="Steering wheel. Scroll or swipe over the rim to steer, or use the left and right arrow keys." class="wheel" src="/assets/car-wheel-comic.png" alt="" draggable="false">
       <button class="object visor" data-k="about" aria-label="Visor ID: about Martin">
         <span class="paint-layer paint-visor" aria-hidden="true"><img src="/assets/visor-comic.png" alt="" draggable="false"></span><span class="object-tag">ABOUT</span><span class="visor-seam"></span>
         <img class="visor-photo" style="position:absolute;left:8.3%;top:23.4%;width:18.6%;height:50%;object-fit:cover;object-position:center 43%;z-index:2;clip-path:polygon(0 4%,91% 0,100% 95%,5% 100%)" src="/assets/martin-luspo.png" alt="Martin Luspo" draggable="false" width="96" height="96"><span class="visor-clip paint-layer paint-visor" style="z-index:4;clip-path:polygon(11.2% 0,16.7% 0,16.7% 28%,11.2% 28%)" aria-hidden="true"><img src="/assets/visor-comic.png" alt="" draggable="false"></span><span class="license"><span class="paperclip"></span><span class="license-text"><small>DRIVER / DEVELOPER</small><strong>MARTIN<br>LUSPO</strong><span>Frontend &amp; UI/UX Developer</span><i>Always taking the scenic route.</i></span></span>
@@ -102,7 +103,6 @@
   </div>
   <div id="crash-veil" aria-hidden="true"></div>
   <p class="driving-hint" id="driving-hint">Move to an edge to look around. Move back to the middle to stop.</p>
-  <span id="edge-cue" aria-hidden="true"></span>
   <span id="progress" aria-live="polite">0 of 4 explored</span>
 </main>
 <nav id="quick-nav" aria-label="Portfolio shortcuts">
