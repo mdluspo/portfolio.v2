@@ -550,7 +550,7 @@ card.addEventListener('wheel',event=>{
 radio.addEventListener('wheel',event=>{
   if(!started||event.ctrlKey)return;
   event.preventDefault();event.stopPropagation();
-  if(crash||card.open||!inserted||usbAnimation)return;
+  if(crash||card.open||usbAnimation)return;
   const vertical=Math.abs(event.deltaY)>=Math.abs(event.deltaX);
   const delta=vertical?event.deltaY:event.deltaX;
   if(!delta)return;

@@ -509,3 +509,124 @@ body:not(.started) #quick-nav{display:none}
 /* Keep modal compositing cheap: the road scene is already dimmed behind paper. */
 dialog::backdrop{background:#16191888;backdrop-filter:none}
 
+/* Mobile layout safeguards */
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --mobile-gutter: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  main,
+  header,
+  footer,
+  section,
+  .container,
+  .wrapper {
+    max-width: 100%;
+  }
+
+  main,
+  section {
+    padding-left: var(--mobile-gutter);
+    padding-right: var(--mobile-gutter);
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 11vw, 4rem);
+    line-height: 0.98;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 8vw, 3rem);
+  }
+
+  nav ul,
+  .nav-links,
+  .navigation,
+  .button-group,
+  .actions {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .grid,
+  .projects-grid,
+  .cards,
+  .skills-grid,
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero,
+  .hero-content,
+  .split,
+  .two-column,
+  .about-content,
+  .contact-content {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .hero,
+  .section,
+  section {
+    min-height: auto;
+  }
+
+  .card,
+  .project-card,
+  .panel {
+    width: 100%;
+  }
+
+  button,
+  .button,
+  a[role="button"] {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  main,
+  section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .button-group,
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .button-group > *,
+  .actions > * {
+    width: 100%;
+  }
+}
